@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=3.0">
+    <title>Instant Pot Rice</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍲</text></svg>">
+    <link rel="manifest" href='data:application/json,%7B"name":"Instant%20Pot%20Rice","short_name":"Rice","start_url":"./index.html","display":"standalone","background_color":"%23f3f4f6","theme_color":"%232563eb"%7D'>
+
+    <style>
+        @keyframes fade-in {
+            from { opacity: 0; transform: translateY(-4px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in { animation: fade-in 0.15s ease-out; }
+        /* Hide number-input spinners so the big centred figure stays centred. */
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
+    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gray-100 text-gray-900 p-4 font-sans flex justify-center items-start pt-6 sm:pt-10">
+
+    <div class="bg-white rounded-2xl shadow-lg w-full max-w-md overflow-hidden pb-4">
+        <div class="bg-blue-600 text-white p-5 text-center">
+            <h1 class="text-xl font-bold flex items-center justify-center gap-2 tracking-wide">
+                <span>🍲</span> INSTANT POT RICE
+            </h1>
+        </div>
+
+        <div class="p-5 space-y-6">
+            <div class="space-y-2">
+                <label for="weight" class="block text-xs font-bold text-gray-500 uppercase tracking-wider text-center">
+                    Dry Rice Weight (grams)
+                </label>
+                <input id="weight" type="number" inputmode="numeric" pattern="[0-9]*" value="300" placeholder="0"
+                    autocomplete="off"
+                    class="w-full text-5xl font-black text-center text-blue-900 border-b-2 border-gray-200 focus:border-blue-600 outline-none pb-2 transition-colors">
+            </div>
+
+            <div class="space-y-2">
+                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider text-center mb-3">
+                    Rice Type
+                </label>
+                <div id="rice-grid" class="grid grid-cols-2 gap-3"></div>
+            </div>
+
+            <div id="modifier-wrap" class="pt-2 animate-fade-in hidden">
+                <button id="modifier-btn" type="button" class="w-full py-3 px-4 rounded-xl font-bold text-sm border-2 transition-colors"></button>
+            </div>
+
+            <hr class="border-gray-100">
+
+            <div class="bg-slate-50 p-5 rounded-xl border border-slate-200 space-y-4 shadow-inner">
+                <div class="flex justify-between items-end border-b border-slate-200 pb-3">
+                    <div>
+                        <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Add Water</div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-2xl">💧</span>
+                            <span id="water" class="text-4xl font-black text-blue-600">0</span>
+                            <span class="text-lg font-bold text-blue-400 mb-1">mL</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-between items-end border-b border-slate-200 pb-3">
+                    <div>
+                        <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">High Pressure</div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-2xl">⏱️</span>
+                            <span id="time" class="text-4xl font-black text-slate-800">0</span>
+                            <span class="text-lg font-bold text-slate-400 mb-1">min</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center pt-1">
+                    <div>
+                        <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Release Method</div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-2xl">💨</span>
+                            <span class="text-xl font-bold text-slate-700">10 Min NPR</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    const riceOptions = [
+        { id: 'white-basmati',  label: 'White Basmati',  icon: '🍚' },
+        { id: 'jasmine',        label: 'Jasmine',        icon: '🌸' },
+        { id: 'brown-basmati',  label: 'Brown Basmati',  icon: '🌾' },
+        { id: 'standard-brown', label: 'Standard Brown', icon: '🟤' },
+    ];
+
+    // Each modifier shifts the pressure time for its rice type only.
+    const modifiers = {
+        'white-basmati': {
+            value: 'wet',
+            text: '⚠️ Sat wet 2+ hours / Want firmer grains',
+            on: 'bg-amber-100 text-amber-800 border-amber-500',
+        },
+        'brown-basmati': {
+            value: 'soaked',
+            text: '💧 Soaked in water 2+ hours',
+            on: 'bg-blue-600 text-white border-blue-600',
+        },
+    };
+    const MODIFIER_OFF = 'bg-gray-50 text-gray-500 border-gray-200';
+
+    let weight = 300;
+    let riceType = 'white-basmati';
+    let modifier = 'none';
+
+    const calculateWater = (w) => {
+        if (!w || w <= 0) return 0;
+        return Math.round((w * 1.2) / 10) * 10;
+    };
+
+    const calculateTime = () => {
+        switch (riceType) {
+            case 'white-basmati':
+                return modifier === 'wet' ? 3 : 4;
+            case 'jasmine':
+                return 3;
+            case 'brown-basmati':
+                return modifier === 'soaked' ? 12 : 15;
+            case 'standard-brown':
+                return 22;
+            default:
+                return 0;
+        }
+    };
+
+    const grid = document.getElementById('rice-grid');
+    const modWrap = document.getElementById('modifier-wrap');
+    const modBtn = document.getElementById('modifier-btn');
+    const weightInput = document.getElementById('weight');
+
+    riceOptions.forEach((rice) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.dataset.id = rice.id;
+        btn.innerHTML = `<span class="text-2xl">${rice.icon}</span>${rice.label}`;
+        btn.addEventListener('click', () => {
+            riceType = rice.id;
+            modifier = 'none';
+            render();
+        });
+        grid.appendChild(btn);
+    });
+
+    modBtn.addEventListener('click', () => {
+        const mod = modifiers[riceType];
+        if (!mod) return;
+        modifier = modifier === mod.value ? 'none' : mod.value;
+        render();
+    });
+
+    weightInput.addEventListener('input', (e) => {
+        weight = parseInt(e.target.value, 10) || 0;
+        render();
+    });
+
+    function render() {
+        const base = 'py-3 px-2 rounded-xl font-bold text-sm flex flex-col items-center gap-1 transition-all border-2';
+        grid.querySelectorAll('button').forEach((btn) => {
+            btn.className = btn.dataset.id === riceType
+                ? `${base} bg-blue-100 text-blue-800 border-blue-600 shadow-sm`
+                : `${base} bg-gray-50 text-gray-500 border-transparent hover:bg-gray-100`;
+        });
+
+        const mod = modifiers[riceType];
+        modWrap.classList.toggle('hidden', !mod);
+        if (mod) {
+            modBtn.textContent = mod.text;
+            modBtn.className = 'w-full py-3 px-4 rounded-xl font-bold text-sm border-2 transition-colors '
+                + (modifier === mod.value ? mod.on : MODIFIER_OFF);
+        }
+
+        document.getElementById('water').textContent = calculateWater(weight);
+        document.getElementById('time').textContent = calculateTime();
+    }
+
+    render();
+</script>
+</body>
+</html>
