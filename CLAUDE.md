@@ -41,6 +41,12 @@ optionally adjust soak time, get water/pressure-time/release-method plus a gener
   the rest default expanded.
 - `render()` is the single redraw function, called after every state mutation (weight/soak
   input, category/item click, stepper/reset click, etc.) — no framework, just re-render on write.
+- Unit conversion happens only at the display/input boundary: `weight` (grams) and `water` (mL)
+  stay canonical everywhere else. `weightUnit`/`waterUnit` state plus `gramsToDisplay`/
+  `displayToGrams`/`mlToDisplay`/`formatWeight`/`formatWater` convert on the way in/out. Cup
+  conversion for dry weight needs a per-item `gramsPerCup` density figure (water doesn't, since
+  it's converted by pure mass↔volume math). Switching category/item while in "cup" mode
+  re-converts through the new item's own `gramsPerCup` — expected, since cups aren't canonical.
 
 ## Roadmap / TODO
 
@@ -53,9 +59,9 @@ just the at-a-glance summary. Update both the issue and this list if scope chang
 - [ ] **Favorites/starring** — [#5](https://github.com/Purple-Drain/instant-pot-calculator/issues/5).
       Star items, persist in `localStorage`, surface them somewhere fast (e.g. a Favorites
       pseudo-category).
-- [ ] **Unit conversion (g/oz/cups, mL/cups/fl oz)** — [#6](https://github.com/Purple-Drain/instant-pot-calculator/issues/6).
-      Convert only at the display/input boundary; keep internal math in grams/mL. Cups need a
-      per-item density figure — the trickiest part.
+- [x] **Unit conversion (g/oz/cups, mL/cups/fl oz)** — [#6](https://github.com/Purple-Drain/instant-pot-calculator/issues/6).
+      Shipped: weight toggle (g/oz/cup) and water toggle (mL/cup/fl oz), converting only at the
+      display/input boundary. See the `gramsPerCup` note in Architecture above.
 - [ ] **Generalize combo dishes beyond Mujaddara** — [#7](https://github.com/Purple-Drain/instant-pot-calculator/issues/7).
       Mujaddara is currently a hand-blended single item. Needs an actual multi-component schema
       (`components: [{ref, share}, ...]`) before more combo dishes can be added without more
