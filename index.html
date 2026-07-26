@@ -17,6 +17,8 @@
         input[type=number]::-webkit-inner-spin-button,
         input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         input[type=number] { -moz-appearance: textfield; }
+        .chevron { display: inline-block; transition: transform 0.15s ease-out; }
+        .section-body.hidden { display: none; }
     </style>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -29,74 +31,116 @@
             </h1>
         </div>
 
-        <div class="p-5 space-y-6">
+        <div class="p-5 space-y-5">
             <div class="space-y-2">
-                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider text-center mb-3">
-                    Category
-                </label>
-                <div id="category-grid" class="grid grid-cols-3 gap-2"></div>
-            </div>
-
-            <div class="space-y-2">
-                <label id="weight-label" for="weight" class="block text-xs font-bold text-gray-500 uppercase tracking-wider text-center">
-                    Dry Weight (grams)
-                </label>
-                <input id="weight" type="number" inputmode="numeric" pattern="[0-9]*" value="300" placeholder="0"
-                    autocomplete="off"
-                    class="w-full text-5xl font-black text-center text-blue-900 border-b-2 border-gray-200 focus:border-blue-600 outline-none pb-2 transition-colors">
+                <button type="button" data-section="category" class="section-toggle w-full flex items-center justify-between text-xs font-bold text-gray-500 uppercase tracking-wider">
+                    <span>Category</span>
+                    <span class="chevron">▾</span>
+                </button>
+                <div id="section-category" class="section-body">
+                    <div id="category-grid" class="grid grid-cols-3 gap-2"></div>
+                </div>
             </div>
 
             <div class="space-y-2">
-                <label id="item-label" class="block text-xs font-bold text-gray-500 uppercase tracking-wider text-center mb-3">
-                    Type
-                </label>
-                <div id="item-grid" class="grid grid-cols-2 gap-3"></div>
+                <button type="button" data-section="weight" class="section-toggle w-full flex items-center justify-between text-xs font-bold text-gray-500 uppercase tracking-wider">
+                    <span id="weight-label">Dry Weight (grams)</span>
+                    <span class="chevron">▾</span>
+                </button>
+                <div id="section-weight" class="section-body">
+                    <input id="weight" type="number" inputmode="numeric" pattern="[0-9]*" value="300" placeholder="0"
+                        autocomplete="off"
+                        class="w-full text-5xl font-black text-center text-blue-900 border-b-2 border-gray-200 focus:border-blue-600 outline-none pb-2 transition-colors">
+                </div>
             </div>
 
-            <div id="soak-wrap" class="space-y-2 pt-2 animate-fade-in">
-                <label for="soak-hours" class="block text-xs font-bold text-gray-500 uppercase tracking-wider text-center">
-                    Soak Time (hours)
-                </label>
-                <input id="soak-hours" type="number" inputmode="decimal" step="0.5" min="0" value="0" placeholder="0"
-                    autocomplete="off"
-                    class="w-full text-3xl font-black text-center text-blue-900 border-b-2 border-gray-200 focus:border-blue-600 outline-none pb-2 transition-colors">
+            <div class="space-y-2">
+                <button type="button" data-section="type" class="section-toggle w-full flex items-center justify-between text-xs font-bold text-gray-500 uppercase tracking-wider">
+                    <span id="item-label">Type</span>
+                    <span class="chevron">▾</span>
+                </button>
+                <div id="section-type" class="section-body">
+                    <div id="item-grid" class="grid grid-cols-2 gap-3 mt-3"></div>
+                </div>
             </div>
 
-            <div id="note" class="text-xs font-semibold text-slate-500 text-center px-1 animate-fade-in"></div>
-            <div id="warning" class="hidden text-xs font-bold text-amber-800 bg-amber-50 border border-amber-200 rounded-lg p-3 text-center animate-fade-in"></div>
+            <div class="space-y-2">
+                <button type="button" data-section="soak" class="section-toggle w-full flex items-center justify-between text-xs font-bold text-gray-500 uppercase tracking-wider">
+                    <span>Soak Time</span>
+                    <span class="chevron">▾</span>
+                </button>
+                <div id="section-soak" class="section-body space-y-2 animate-fade-in">
+                    <div id="soak-controls">
+                        <div class="flex items-center justify-center gap-3">
+                            <button id="soak-dec" type="button" aria-label="Decrease soak time"
+                                class="w-11 h-11 shrink-0 rounded-full border-2 border-gray-200 text-xl font-bold text-gray-500 hover:bg-gray-50 transition-colors">−</button>
+                            <input id="soak-hours" type="number" inputmode="decimal" step="0.5" min="0" value="0" placeholder="0"
+                                autocomplete="off"
+                                class="w-24 text-3xl font-black text-center text-blue-900 border-b-2 border-gray-200 focus:border-blue-600 outline-none pb-2 transition-colors">
+                            <button id="soak-inc" type="button" aria-label="Increase soak time"
+                                class="w-11 h-11 shrink-0 rounded-full border-2 border-gray-200 text-xl font-bold text-gray-500 hover:bg-gray-50 transition-colors">+</button>
+                        </div>
+                        <div class="text-center mt-1">
+                            <button id="soak-reset" type="button" class="text-xs font-bold text-blue-600 hover:text-blue-800 underline underline-offset-2">
+                                ↺ Reset to recommended
+                            </button>
+                        </div>
+                    </div>
+                    <div id="note" class="text-xs font-semibold text-slate-500 text-center px-1"></div>
+                    <div id="warning" class="hidden text-xs font-bold text-amber-800 bg-amber-50 border border-amber-200 rounded-lg p-3 text-center"></div>
+                </div>
+            </div>
 
             <hr class="border-gray-100">
 
-            <div class="bg-slate-50 p-5 rounded-xl border border-slate-200 space-y-4 shadow-inner">
-                <div class="flex justify-between items-end border-b border-slate-200 pb-3">
-                    <div>
-                        <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Add Water</div>
-                        <div class="flex items-center gap-2">
-                            <span class="text-2xl">💧</span>
-                            <span id="water" class="text-4xl font-black text-blue-600">0</span>
-                            <span class="text-lg font-bold text-blue-400 mb-1">mL</span>
+            <div class="space-y-2">
+                <button type="button" data-section="results" class="section-toggle w-full flex items-center justify-between text-xs font-bold text-gray-500 uppercase tracking-wider">
+                    <span>Results</span>
+                    <span class="chevron">▾</span>
+                </button>
+                <div id="section-results" class="section-body">
+                    <div class="bg-slate-50 p-5 rounded-xl border border-slate-200 space-y-4 shadow-inner">
+                        <div class="flex justify-between items-end border-b border-slate-200 pb-3">
+                            <div>
+                                <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Add Water</div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-2xl">💧</span>
+                                    <span id="water" class="text-4xl font-black text-blue-600">0</span>
+                                    <span class="text-lg font-bold text-blue-400 mb-1">mL</span>
+                                </div>
+                                <div id="ratio" class="text-xs font-semibold text-slate-400 mt-1"></div>
+                            </div>
                         </div>
-                        <div id="ratio" class="text-xs font-semibold text-slate-400 mt-1"></div>
+                        <div class="flex justify-between items-end border-b border-slate-200 pb-3">
+                            <div>
+                                <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">High Pressure</div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-2xl">⏱️</span>
+                                    <span id="time" class="text-4xl font-black text-slate-800">0</span>
+                                    <span class="text-lg font-bold text-slate-400 mb-1">min</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center pt-1">
+                            <div>
+                                <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Release Method</div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-2xl">💨</span>
+                                    <span id="release" class="text-xl font-bold text-slate-700">10 Min NPR</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="flex justify-between items-end border-b border-slate-200 pb-3">
-                    <div>
-                        <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">High Pressure</div>
-                        <div class="flex items-center gap-2">
-                            <span class="text-2xl">⏱️</span>
-                            <span id="time" class="text-4xl font-black text-slate-800">0</span>
-                            <span class="text-lg font-bold text-slate-400 mb-1">min</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="flex justify-between items-center pt-1">
-                    <div>
-                        <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Release Method</div>
-                        <div class="flex items-center gap-2">
-                            <span class="text-2xl">💨</span>
-                            <span id="release" class="text-xl font-bold text-slate-700">10 Min NPR</span>
-                        </div>
-                    </div>
+            </div>
+
+            <div class="space-y-2">
+                <button type="button" data-section="method" class="section-toggle w-full flex items-center justify-between text-xs font-bold text-gray-500 uppercase tracking-wider">
+                    <span>Method</span>
+                    <span class="chevron">▾</span>
+                </button>
+                <div id="section-method" class="section-body">
+                    <ol id="method-list" class="list-decimal list-inside space-y-1.5 text-sm text-slate-700 bg-slate-50 border border-slate-200 rounded-xl p-4"></ol>
                 </div>
             </div>
         </div>
@@ -109,6 +153,9 @@
     // = value the soak-hours input starts at for that item; usually equal to
     // soakMinutes, but can be lower when soaking is optional rather than the
     // traditional/recommended default (see Mujaddara).
+    // methodIntro/methodOutro = optional extra steps prepended/appended to the
+    // generic pressure-cooking method (e.g. caramelizing onions for Mujaddara).
+    // skipRinse = true skips the generic "rinse" step (oats don't need it).
     const categories = {
         rice: {
             label: 'Rice', icon: '🍚',
@@ -152,6 +199,7 @@
                     soakMinutes: 480, defaultSoakMinutes: 480,
                     soak: { ratio: 3.0, time: 1 },
                     note: '💧 Soaked overnight (8 hrs, recommended): softens the grain, less water & cook time drops from 4 to 1 min',
+                    skipRinse: true,
                 },
                 'rolled': {
                     label: 'Rolled (Old-Fashioned)', icon: '🥣',
@@ -159,6 +207,7 @@
                     soakMinutes: 0, defaultSoakMinutes: 0,
                     soak: null,
                     note: 'No soak needed — rolled oats are already soft; soaking can make them mushy',
+                    skipRinse: true,
                 },
             },
         },
@@ -239,6 +288,7 @@
                     soakMinutes: 600, defaultSoakMinutes: 600,
                     soak: { ratio: 2.8, time: 20 },
                     note: '💧 Soaking 8–12 hrs (recommended 10) is essential for split dried fava — roughly halves cook time',
+                    methodOutro: 'Lightly mash, then drizzle with olive oil, lemon juice, and a pinch of cumin before serving.',
                 },
             },
         },
@@ -251,13 +301,20 @@
                     soakMinutes: 60, defaultSoakMinutes: 0,
                     soak: { ratio: 2.3, time: 8 },
                     note: 'Weight = combined lentils + rice, split 1:1 by weight. Traditional recipe skips soaking; pre-soaking the lentils ~1 hr trims a couple minutes if you want to.',
+                    methodIntro: ['Thinly slice 2 onions and fry in oil until deep golden brown; set aside for garnish.'],
+                    methodOutro: 'Fluff, top with the caramelized onions, and serve warm.',
                 },
             },
         },
     };
 
-    const MODIFIER_ON = 'bg-blue-600 text-white border-blue-600';
-    const MODIFIER_OFF = 'bg-gray-50 text-gray-500 border-gray-200';
+    const RELEASE_INSTRUCTIONS = {
+        '10 Min NPR': 'Let the pressure release naturally for 10 minutes, then quick-release any remainder.',
+        '15 Min NPR': 'Let the pressure release naturally for 15 minutes, then quick-release any remainder.',
+        'Quick Release': 'Use Quick Release to vent the pressure as soon as cooking finishes.',
+    };
+
+    const SOAK_STEP = 0.5;
 
     let weight = 300;
     let currentCategory = 'rice';
@@ -295,15 +352,67 @@
         return `Dry ${categories[categoryId].label} Weight (grams)`;
     };
 
+    const itemLabelFor = (categoryId) => (categoryId === 'combo' ? 'Dish' : `${categories[categoryId].label} Type`);
+
+    const generateMethodSteps = (item, water, time, hours) => {
+        const steps = [];
+        if (item.methodIntro) steps.push(...item.methodIntro);
+        if (!item.skipRinse) {
+            steps.push(`Rinse the dry ${item.label.toLowerCase()} under cold water until it runs clear.`);
+        }
+        if (item.soak && hours > 0) {
+            const hrsText = hours === 1 ? '1 hr' : `${hours} hrs`;
+            steps.push(`Soak in water for ${hrsText}, then drain.`);
+        }
+        if (item.warning) {
+            steps.push('Boil hard, uncovered, for 10 minutes to neutralize natural toxins, then proceed.');
+        }
+        steps.push(`Add the ${item.label.toLowerCase()} to the Instant Pot with ${water} mL water.`);
+        steps.push('Close the lid and set the valve to Sealing.');
+        steps.push(`Cook on High Pressure for ${time} min.`);
+        steps.push(RELEASE_INSTRUCTIONS[item.release] || `Release: ${item.release}.`);
+        steps.push(item.methodOutro || 'Fluff with a fork and serve.');
+        return steps;
+    };
+
     const categoryGrid = document.getElementById('category-grid');
     const itemGrid = document.getElementById('item-grid');
     const weightInput = document.getElementById('weight');
     const weightLabel = document.getElementById('weight-label');
-    const soakWrap = document.getElementById('soak-wrap');
+    const itemLabel = document.getElementById('item-label');
+    const soakControls = document.getElementById('soak-controls');
     const soakInput = document.getElementById('soak-hours');
+    const soakDecBtn = document.getElementById('soak-dec');
+    const soakIncBtn = document.getElementById('soak-inc');
+    const soakResetBtn = document.getElementById('soak-reset');
     const noteEl = document.getElementById('note');
     const warningEl = document.getElementById('warning');
+    const methodList = document.getElementById('method-list');
 
+    // --- Collapsible sections ---
+    const sectionExpanded = {
+        category: true, weight: true, type: true, soak: true, results: true, method: false,
+    };
+
+    function applySectionState(id) {
+        const body = document.getElementById(`section-${id}`);
+        const chevron = document.querySelector(`.section-toggle[data-section="${id}"] .chevron`);
+        const expanded = sectionExpanded[id];
+        body.classList.toggle('hidden', !expanded);
+        chevron.textContent = expanded ? '▾' : '▸';
+    }
+
+    document.querySelectorAll('.section-toggle').forEach((btn) => {
+        const id = btn.dataset.section;
+        btn.addEventListener('click', () => {
+            sectionExpanded[id] = !sectionExpanded[id];
+            applySectionState(id);
+        });
+    });
+
+    Object.keys(sectionExpanded).forEach(applySectionState);
+
+    // --- Category & item pickers ---
     Object.entries(categories).forEach(([id, cat]) => {
         const btn = document.createElement('button');
         btn.type = 'button';
@@ -317,16 +426,6 @@
             render();
         });
         categoryGrid.appendChild(btn);
-    });
-
-    soakInput.addEventListener('input', (e) => {
-        soakHours = parseFloat(e.target.value) || 0;
-        render();
-    });
-
-    weightInput.addEventListener('input', (e) => {
-        weight = parseInt(e.target.value, 10) || 0;
-        render();
     });
 
     let itemGridCategory = null;
@@ -348,6 +447,35 @@
         itemGridCategory = currentCategory;
     }
 
+    // --- Weight input ---
+    weightInput.addEventListener('input', (e) => {
+        weight = parseInt(e.target.value, 10) || 0;
+        render();
+    });
+
+    // --- Soak hours: typed input, +/- stepper, and reset ---
+    const roundHours = (h) => Math.max(0, Math.round(h * 100) / 100);
+
+    soakInput.addEventListener('input', (e) => {
+        soakHours = parseFloat(e.target.value) || 0;
+        render();
+    });
+
+    soakDecBtn.addEventListener('click', () => {
+        soakHours = roundHours(soakHours - SOAK_STEP);
+        render();
+    });
+
+    soakIncBtn.addEventListener('click', () => {
+        soakHours = roundHours(soakHours + SOAK_STEP);
+        render();
+    });
+
+    soakResetBtn.addEventListener('click', () => {
+        soakHours = currentItem().defaultSoakMinutes / 60;
+        render();
+    });
+
     function render() {
         const catBase = 'py-2 px-1 rounded-lg font-bold flex flex-col items-center gap-1 transition-all border-2';
         categoryGrid.querySelectorAll('button').forEach((btn) => {
@@ -367,14 +495,15 @@
         });
 
         weightLabel.textContent = weightLabelFor(currentCategory);
+        itemLabel.textContent = itemLabelFor(currentCategory);
 
         const item = currentItem();
 
         if (item.soak) {
-            soakWrap.classList.remove('hidden');
+            soakControls.classList.remove('hidden');
             soakInput.value = soakHours;
         } else {
-            soakWrap.classList.add('hidden');
+            soakControls.classList.add('hidden');
         }
 
         noteEl.textContent = item.note || '';
@@ -386,10 +515,20 @@
             warningEl.classList.add('hidden');
         }
 
-        document.getElementById('water').textContent = calculateWater(weight, item, soakHours);
-        document.getElementById('time').textContent = activeTime(item, soakHours);
+        const water = calculateWater(weight, item, soakHours);
+        const time = activeTime(item, soakHours);
+
+        document.getElementById('water').textContent = water;
+        document.getElementById('time').textContent = time;
         document.getElementById('release').textContent = item.release;
         document.getElementById('ratio').textContent = `Ratio 1 : ${activeRatio(item, soakHours).toFixed(2)} (dry : water)`;
+
+        methodList.innerHTML = '';
+        generateMethodSteps(item, water, time, soakHours).forEach((step) => {
+            const li = document.createElement('li');
+            li.textContent = step;
+            methodList.appendChild(li);
+        });
     }
 
     render();
