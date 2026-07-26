@@ -48,9 +48,10 @@
                     <span class="chevron">▾</span>
                 </button>
                 <div id="section-weight" class="section-body">
-                    <input id="weight" type="number" inputmode="numeric" pattern="[0-9]*" value="300" placeholder="0"
+                    <input id="weight" type="number" inputmode="decimal" value="300" placeholder="0"
                         autocomplete="off"
                         class="w-full text-5xl font-black text-center text-blue-900 border-b-2 border-gray-200 focus:border-blue-600 outline-none pb-2 transition-colors">
+                    <div id="weight-unit-toggle" class="flex justify-center gap-2 mt-2"></div>
                 </div>
             </div>
 
@@ -106,8 +107,9 @@
                                 <div class="flex items-center gap-2">
                                     <span class="text-2xl">💧</span>
                                     <span id="water" class="text-4xl font-black text-blue-600">0</span>
-                                    <span class="text-lg font-bold text-blue-400 mb-1">mL</span>
+                                    <span id="water-unit-label" class="text-lg font-bold text-blue-400 mb-1">mL</span>
                                 </div>
+                                <div id="water-unit-toggle" class="flex gap-2 mt-1"></div>
                                 <div id="ratio" class="text-xs font-semibold text-slate-400 mt-1"></div>
                             </div>
                         </div>
@@ -156,34 +158,37 @@
     // methodIntro/methodOutro = optional extra steps prepended/appended to the
     // generic pressure-cooking method (e.g. caramelizing onions for Mujaddara).
     // skipRinse = true skips the generic "rinse" step (oats don't need it).
+    // gramsPerCup = approximate weight of 1 US cup of this dry ingredient, only
+    // used to convert the weight input to/from "cup" units (water needs no such
+    // figure since it's converted by pure volume/mass math).
     const categories = {
         rice: {
             label: 'Rice', icon: '🍚',
             items: {
                 'white-basmati': {
                     label: 'White Basmati', icon: '🍚',
-                    ratio: 1.2, time: 4, release: '10 Min NPR',
+                    ratio: 1.2, time: 4, release: '10 Min NPR', gramsPerCup: 185,
                     soakMinutes: 30, defaultSoakMinutes: 30,
                     soak: { ratio: 1.05, time: 3 },
                     note: '💧 Soaked 30 min: cuts water & 1 min off cook time, fluffier separate grains',
                 },
                 'jasmine': {
                     label: 'Jasmine', icon: '🌸',
-                    ratio: 1.1, time: 3, release: '10 Min NPR',
+                    ratio: 1.1, time: 3, release: '10 Min NPR', gramsPerCup: 185,
                     soakMinutes: 30, defaultSoakMinutes: 0,
                     soak: { ratio: 1.0, time: 2 },
                     note: '💧 Soaking 20–30 min is optional for jasmine: less sticky, 1 min less cook time',
                 },
                 'brown-basmati': {
                     label: 'Brown Basmati', icon: '🌾',
-                    ratio: 1.25, time: 15, release: '10 Min NPR',
+                    ratio: 1.25, time: 15, release: '10 Min NPR', gramsPerCup: 190,
                     soakMinutes: 120, defaultSoakMinutes: 120,
                     soak: { ratio: 1.1, time: 12 },
                     note: '💧 Soaked 2+ hrs (recommended): less water, cooks 3 min faster & more evenly',
                 },
                 'standard-brown': {
                     label: 'Standard Brown', icon: '🟤',
-                    ratio: 1.25, time: 22, release: '10 Min NPR',
+                    ratio: 1.25, time: 22, release: '10 Min NPR', gramsPerCup: 195,
                     soakMinutes: 120, defaultSoakMinutes: 120,
                     soak: { ratio: 1.1, time: 18 },
                     note: '💧 Soaked 2+ hrs (recommended): less water, cuts 4 min off cook time',
@@ -195,7 +200,7 @@
             items: {
                 'steel-cut': {
                     label: 'Steel-Cut', icon: '🌾',
-                    ratio: 4.0, time: 4, release: '10 Min NPR',
+                    ratio: 4.0, time: 4, release: '10 Min NPR', gramsPerCup: 175,
                     soakMinutes: 480, defaultSoakMinutes: 480,
                     soak: { ratio: 3.0, time: 1 },
                     note: '💧 Soaked overnight (8 hrs, recommended): softens the grain, less water & cook time drops from 4 to 1 min',
@@ -203,7 +208,7 @@
                 },
                 'rolled': {
                     label: 'Rolled (Old-Fashioned)', icon: '🥣',
-                    ratio: 3.0, time: 1, release: 'Quick Release',
+                    ratio: 3.0, time: 1, release: 'Quick Release', gramsPerCup: 85,
                     soakMinutes: 0, defaultSoakMinutes: 0,
                     soak: null,
                     note: 'No soak needed — rolled oats are already soft; soaking can make them mushy',
@@ -216,7 +221,7 @@
             items: {
                 'quinoa': {
                     label: 'Quinoa', icon: '🌱',
-                    ratio: 1.4, time: 1, release: 'Quick Release',
+                    ratio: 1.4, time: 1, release: 'Quick Release', gramsPerCup: 170,
                     soakMinutes: 20, defaultSoakMinutes: 20,
                     soak: { ratio: 1.3, time: 1 },
                     note: '💧 Soaking (& rinsing) 20–30 min removes bitterness (saponins) and aids digestion',
@@ -228,14 +233,14 @@
             items: {
                 'red': {
                     label: 'Red (Split)', icon: '🔴',
-                    ratio: 2.2, time: 2, release: 'Quick Release',
+                    ratio: 2.2, time: 2, release: 'Quick Release', gramsPerCup: 195,
                     soakMinutes: 0, defaultSoakMinutes: 0,
                     soak: null,
                     note: 'No soak needed — split red lentils cook fast and soften either way',
                 },
                 'brown-green': {
                     label: 'Brown/Green', icon: '🟤',
-                    ratio: 2.2, time: 9, release: '10 Min NPR',
+                    ratio: 2.2, time: 9, release: '10 Min NPR', gramsPerCup: 192,
                     soakMinutes: 60, defaultSoakMinutes: 60,
                     soak: { ratio: 2.0, time: 6 },
                     note: '💧 Soaked 1 hr (recommended): cooks faster & more evenly (not strictly required)',
@@ -247,14 +252,14 @@
             items: {
                 'chickpeas': {
                     label: 'Chickpeas', icon: '🟡',
-                    ratio: 3.6, time: 38, release: '15 Min NPR',
+                    ratio: 3.6, time: 38, release: '15 Min NPR', gramsPerCup: 200,
                     soakMinutes: 480, defaultSoakMinutes: 480,
                     soak: { ratio: 2.6, time: 13 },
                     note: '💧 Soaked overnight (8 hrs, recommended): time drops from 38 to 13 min, creamier texture',
                 },
                 'kidney': {
                     label: 'Kidney (Red)', icon: '🔴',
-                    ratio: 3.5, time: 35, release: '15 Min NPR',
+                    ratio: 3.5, time: 35, release: '15 Min NPR', gramsPerCup: 185,
                     soakMinutes: 480, defaultSoakMinutes: 480,
                     soak: { ratio: 2.5, time: 12 },
                     note: '💧 Soaked overnight (8 hrs, recommended): time drops from 35 to 12 min',
@@ -262,7 +267,7 @@
                 },
                 'cannellini': {
                     label: 'Cannellini', icon: '⚪',
-                    ratio: 3.5, time: 35, release: '15 Min NPR',
+                    ratio: 3.5, time: 35, release: '15 Min NPR', gramsPerCup: 185,
                     soakMinutes: 480, defaultSoakMinutes: 480,
                     soak: { ratio: 2.5, time: 12 },
                     note: '💧 Soaked overnight (8 hrs, recommended): time drops from 35 to 12 min',
@@ -270,21 +275,21 @@
                 },
                 'black': {
                     label: 'Black Beans', icon: '⚫',
-                    ratio: 3.3, time: 22, release: '15 Min NPR',
+                    ratio: 3.3, time: 22, release: '15 Min NPR', gramsPerCup: 190,
                     soakMinutes: 480, defaultSoakMinutes: 480,
                     soak: { ratio: 2.4, time: 10 },
                     note: '💧 Soaked overnight (8 hrs, recommended): time drops from 22 to 10 min',
                 },
                 'pinto': {
                     label: 'Pinto Beans', icon: '🟤',
-                    ratio: 3.3, time: 25, release: '15 Min NPR',
+                    ratio: 3.3, time: 25, release: '15 Min NPR', gramsPerCup: 190,
                     soakMinutes: 480, defaultSoakMinutes: 480,
                     soak: { ratio: 2.4, time: 11 },
                     note: '💧 Soaked overnight (8 hrs, recommended): time drops from 25 to 11 min',
                 },
                 'ful-medames': {
                     label: 'Ful Medames (Fava)', icon: '🫘',
-                    ratio: 3.8, time: 45, release: '15 Min NPR',
+                    ratio: 3.8, time: 45, release: '15 Min NPR', gramsPerCup: 180,
                     soakMinutes: 600, defaultSoakMinutes: 600,
                     soak: { ratio: 2.8, time: 20 },
                     note: '💧 Soaking 8–12 hrs (recommended 10) is essential for split dried fava — roughly halves cook time',
@@ -297,7 +302,7 @@
             items: {
                 'mujaddara': {
                     label: 'Mujaddara (Lentils+Rice)', icon: '🍛',
-                    ratio: 2.5, time: 10, release: '10 Min NPR',
+                    ratio: 2.5, time: 10, release: '10 Min NPR', gramsPerCup: 190,
                     soakMinutes: 60, defaultSoakMinutes: 0,
                     soak: { ratio: 2.3, time: 8 },
                     note: 'Weight = combined lentils + rice, split 1:1 by weight. Traditional recipe skips soaking; pre-soaking the lentils ~1 hr trims a couple minutes if you want to.',
@@ -348,11 +353,57 @@
     };
 
     const weightLabelFor = (categoryId) => {
-        if (categoryId === 'combo') return 'Combined Dry Weight — Lentils + Rice, 1:1 (grams)';
-        return `Dry ${categories[categoryId].label} Weight (grams)`;
+        if (categoryId === 'combo') return 'Combined Dry Weight — Lentils + Rice, 1:1';
+        return `Dry ${categories[categoryId].label} Weight`;
     };
 
     const itemLabelFor = (categoryId) => (categoryId === 'combo' ? 'Dish' : `${categories[categoryId].label} Type`);
+
+    // --- Unit conversion (display/input boundary only — `weight` stays canonical
+    // in grams and `water` stays canonical in mL throughout the rest of the app) ---
+    const GRAMS_PER_OZ = 28.3495;
+    const ML_PER_CUP = 236.588;
+    const ML_PER_FLOZ = 29.5735;
+
+    const WEIGHT_UNITS = [
+        { id: 'g', label: 'g' },
+        { id: 'oz', label: 'oz' },
+        { id: 'cup', label: 'cup' },
+    ];
+    const WATER_UNITS = [
+        { id: 'mL', label: 'mL' },
+        { id: 'cup', label: 'cup' },
+        { id: 'floz', label: 'fl oz' },
+    ];
+
+    const gramsToDisplay = (grams, unit, item) => {
+        if (unit === 'oz') return grams / GRAMS_PER_OZ;
+        if (unit === 'cup') return grams / item.gramsPerCup;
+        return grams;
+    };
+
+    const displayToGrams = (value, unit, item) => {
+        if (unit === 'oz') return value * GRAMS_PER_OZ;
+        if (unit === 'cup') return value * item.gramsPerCup;
+        return value;
+    };
+
+    const mlToDisplay = (ml, unit) => {
+        if (unit === 'cup') return ml / ML_PER_CUP;
+        if (unit === 'floz') return ml / ML_PER_FLOZ;
+        return ml;
+    };
+
+    const formatWeight = (grams, unit, item) => {
+        const v = gramsToDisplay(grams, unit, item);
+        return unit === 'g' ? String(Math.round(v)) : v.toFixed(2);
+    };
+
+    const formatWater = (ml, unit) => {
+        const v = mlToDisplay(ml, unit);
+        if (unit === 'mL') return String(Math.round(v));
+        return unit === 'floz' ? v.toFixed(1) : v.toFixed(2);
+    };
 
     const generateMethodSteps = (item, water, time, hours) => {
         const steps = [];
@@ -379,6 +430,7 @@
     const itemGrid = document.getElementById('item-grid');
     const weightInput = document.getElementById('weight');
     const weightLabel = document.getElementById('weight-label');
+    const weightUnitToggle = document.getElementById('weight-unit-toggle');
     const itemLabel = document.getElementById('item-label');
     const soakControls = document.getElementById('soak-controls');
     const soakInput = document.getElementById('soak-hours');
@@ -388,6 +440,30 @@
     const noteEl = document.getElementById('note');
     const warningEl = document.getElementById('warning');
     const methodList = document.getElementById('method-list');
+    const waterUnitToggle = document.getElementById('water-unit-toggle');
+    const waterUnitLabel = document.getElementById('water-unit-label');
+
+    let weightUnit = 'g';
+    let waterUnit = 'mL';
+
+    const UNIT_BTN_BASE = 'px-3 py-1 rounded-full text-xs font-bold border-2 transition-colors';
+
+    const buildUnitToggle = (container, units, onSelect) => {
+        units.forEach((u) => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.dataset.unit = u.id;
+            btn.textContent = u.label;
+            btn.addEventListener('click', () => {
+                onSelect(u.id);
+                render();
+            });
+            container.appendChild(btn);
+        });
+    };
+
+    buildUnitToggle(weightUnitToggle, WEIGHT_UNITS, (id) => { weightUnit = id; });
+    buildUnitToggle(waterUnitToggle, WATER_UNITS, (id) => { waterUnit = id; });
 
     // --- Collapsible sections ---
     const sectionExpanded = {
@@ -449,7 +525,8 @@
 
     // --- Weight input ---
     weightInput.addEventListener('input', (e) => {
-        weight = parseInt(e.target.value, 10) || 0;
+        const typed = parseFloat(e.target.value) || 0;
+        weight = displayToGrams(typed, weightUnit, currentItem());
         render();
     });
 
@@ -477,6 +554,8 @@
     });
 
     function render() {
+        const item = currentItem();
+
         const catBase = 'py-2 px-1 rounded-lg font-bold flex flex-col items-center gap-1 transition-all border-2';
         categoryGrid.querySelectorAll('button').forEach((btn) => {
             btn.className = btn.dataset.id === currentCategory
@@ -497,7 +576,16 @@
         weightLabel.textContent = weightLabelFor(currentCategory);
         itemLabel.textContent = itemLabelFor(currentCategory);
 
-        const item = currentItem();
+        weightInput.value = formatWeight(weight, weightUnit, item);
+        const unitBtnClass = (active) => `${UNIT_BTN_BASE} ${active
+            ? 'bg-blue-600 text-white border-blue-600'
+            : 'bg-gray-50 text-gray-500 border-gray-200 hover:bg-gray-100'}`;
+        weightUnitToggle.querySelectorAll('button').forEach((btn) => {
+            btn.className = unitBtnClass(btn.dataset.unit === weightUnit);
+        });
+        waterUnitToggle.querySelectorAll('button').forEach((btn) => {
+            btn.className = unitBtnClass(btn.dataset.unit === waterUnit);
+        });
 
         if (item.soak) {
             soakControls.classList.remove('hidden');
@@ -518,7 +606,8 @@
         const water = calculateWater(weight, item, soakHours);
         const time = activeTime(item, soakHours);
 
-        document.getElementById('water').textContent = water;
+        document.getElementById('water').textContent = formatWater(water, waterUnit);
+        waterUnitLabel.textContent = WATER_UNITS.find((u) => u.id === waterUnit).label;
         document.getElementById('time').textContent = time;
         document.getElementById('release').textContent = item.release;
         document.getElementById('ratio').textContent = `Ratio 1 : ${activeRatio(item, soakHours).toFixed(2)} (dry : water)`;
