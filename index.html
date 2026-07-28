@@ -101,12 +101,14 @@
                     <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3">
                         <div class="text-xs font-bold text-slate-500 uppercase tracking-wider">Bicarb Wash Calculator</div>
                         <div class="flex items-center justify-center gap-2">
+                            <label for="prep-wash-weight" class="sr-only">Produce weight in grams</label>
                             <input id="prep-wash-weight" type="number" inputmode="decimal" min="50" step="50" value="500"
-                                autocomplete="off"
+                                autocomplete="off" aria-label="Produce weight in grams"
                                 class="w-24 text-2xl font-black text-center text-blue-900 border-b-2 border-gray-200 focus:border-blue-600 outline-none pb-1 transition-colors">
                             <span class="text-sm font-semibold text-slate-500">g produce</span>
                         </div>
-                        <input id="prep-wash-slider" type="range" min="100" max="3000" step="50" value="500" class="w-full accent-blue-600">
+                        <label for="prep-wash-slider" class="sr-only">Produce weight slider</label>
+                        <input id="prep-wash-slider" type="range" min="100" max="3000" step="50" value="500" class="w-full accent-blue-600" aria-label="Produce weight slider">
                         <div class="grid grid-cols-2 gap-3 text-center">
                             <div>
                                 <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">Wash Water</div>
@@ -610,7 +612,7 @@
     // used in the cleaning steps above.
     const WASH_WATER_MIN_ML = 500;
     const computeWash = (grams) => {
-        const waterMl = Math.max(WASH_WATER_MIN_ML, Math.round(grams / 50) * 50);
+        const waterMl = Math.max(WASH_WATER_MIN_ML, Math.ceil(grams / 50) * 50);
         const bicarbTsp = Math.round((waterMl / 500) * 2) / 2;
         return { waterMl, bicarbTsp };
     };
