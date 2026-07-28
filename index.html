@@ -98,6 +98,27 @@
                     <span class="chevron">▾</span>
                 </button>
                 <div id="section-prepguide" class="section-body space-y-4">
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3">
+                        <div class="text-xs font-bold text-slate-500 uppercase tracking-wider">Bicarb Wash Calculator</div>
+                        <div class="flex items-center justify-center gap-2">
+                            <input id="prep-wash-weight" type="number" inputmode="decimal" min="50" step="50" value="500"
+                                autocomplete="off"
+                                class="w-24 text-2xl font-black text-center text-blue-900 border-b-2 border-gray-200 focus:border-blue-600 outline-none pb-1 transition-colors">
+                            <span class="text-sm font-semibold text-slate-500">g produce</span>
+                        </div>
+                        <input id="prep-wash-slider" type="range" min="100" max="3000" step="50" value="500" class="w-full accent-blue-600">
+                        <div class="grid grid-cols-2 gap-3 text-center">
+                            <div>
+                                <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">Wash Water</div>
+                                <div id="prep-wash-water" class="text-lg font-black text-blue-600">500 mL</div>
+                            </div>
+                            <div>
+                                <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">Bicarb Soda</div>
+                                <div id="prep-wash-bicarb" class="text-lg font-black text-slate-800">1 tsp</div>
+                            </div>
+                        </div>
+                        <div class="text-xs text-slate-400 text-center">~1 tsp bicarb per 2 cups (500mL) water, enough to submerge — adjust for your bowl size.</div>
+                    </div>
                     <div id="prep-cleaning"></div>
                     <div id="prep-destarch"></div>
                     <div id="prep-method-tabs" class="flex flex-wrap gap-2"></div>
@@ -584,6 +605,16 @@
         return steps;
     };
 
+    // Wash calculator: enough water to submerge the produce (~1mL per gram, 500mL
+    // floor for a small batch), bicarb scaled to the same ~1 tsp per 2 cups ratio
+    // used in the cleaning steps above.
+    const WASH_WATER_MIN_ML = 500;
+    const computeWash = (grams) => {
+        const waterMl = Math.max(WASH_WATER_MIN_ML, Math.round(grams / 50) * 50);
+        const bicarbTsp = Math.round((waterMl / 500) * 2) / 2;
+        return { waterMl, bicarbTsp };
+    };
+
     const buildPrepList = (heading, lines) => {
         if (!lines) return '';
         const items = lines.map((l) => `<li>${l}</li>`).join('');
@@ -616,9 +647,14 @@
     const prepDestarch = document.getElementById('prep-destarch');
     const prepMethodTabs = document.getElementById('prep-method-tabs');
     const prepSteps = document.getElementById('prep-steps');
+    const prepWashWeightInput = document.getElementById('prep-wash-weight');
+    const prepWashSlider = document.getElementById('prep-wash-slider');
+    const prepWashWaterEl = document.getElementById('prep-wash-water');
+    const prepWashBicarbEl = document.getElementById('prep-wash-bicarb');
 
     let weightUnit = 'g';
     let waterUnit = 'mL';
+    let prepWashWeight = 500;
 
     const UNIT_BTN_BASE = 'px-3 py-1 rounded-full text-xs font-bold border-2 transition-colors';
 
@@ -639,8 +675,24 @@
     buildUnitToggle(weightUnitToggle, WEIGHT_UNITS, (id) => { weightUnit = id; });
     buildUnitToggle(waterUnitToggle, WATER_UNITS, (id) => { waterUnit = id; });
 
+    prepWashWeightInput.addEventListener('input', (e) => {
+        prepWashWeight = Math.max(0, parseFloat(e.target.value) || 0);
+        prepWashSlider.value = Math.min(3000, Math.max(100, prepWashWeight));
+        render();
+    });
+
+    prepWashSlider.addEventListener('input', (e) => {
+        prepWashWeight = parseFloat(e.target.value) || 0;
+        prepWashWeightInput.value = prepWashWeight;
+        render();
+    });
+
     function renderPrepGuide(item) {
         const g = item.prepGuide;
+
+        const { waterMl, bicarbTsp } = computeWash(prepWashWeight);
+        prepWashWaterEl.textContent = `${waterMl} mL (~${(waterMl / ML_PER_CUP).toFixed(1)} cups)`;
+        prepWashBicarbEl.textContent = `${bicarbTsp} tsp`;
 
         prepCleaning.innerHTML = buildPrepList('Cleaning', g.cleaning);
         prepDestarch.innerHTML = buildPrepList('Destarch (cold-water soak)', g.destarch);
