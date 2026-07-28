@@ -42,7 +42,7 @@
                 </div>
             </div>
 
-            <div class="space-y-2">
+            <div class="space-y-2" id="block-weight">
                 <button type="button" data-section="weight" class="section-toggle w-full flex items-center justify-between text-xs font-bold text-gray-500 uppercase tracking-wider">
                     <span id="weight-label">Dry Weight (grams)</span>
                     <span class="chevron">▾</span>
@@ -65,7 +65,7 @@
                 </div>
             </div>
 
-            <div class="space-y-2">
+            <div class="space-y-2" id="block-soak">
                 <button type="button" data-section="soak" class="section-toggle w-full flex items-center justify-between text-xs font-bold text-gray-500 uppercase tracking-wider">
                     <span>Soak Time</span>
                     <span class="chevron">▾</span>
@@ -92,9 +92,22 @@
                 </div>
             </div>
 
+            <div class="space-y-2 hidden" id="block-prepguide">
+                <button type="button" data-section="prepguide" class="section-toggle w-full flex items-center justify-between text-xs font-bold text-gray-500 uppercase tracking-wider">
+                    <span>Prep Guide</span>
+                    <span class="chevron">▾</span>
+                </button>
+                <div id="section-prepguide" class="section-body space-y-4">
+                    <div id="prep-cleaning"></div>
+                    <div id="prep-destarch"></div>
+                    <div id="prep-method-tabs" class="flex flex-wrap gap-2"></div>
+                    <div id="prep-steps" class="space-y-4"></div>
+                </div>
+            </div>
+
             <hr class="border-gray-100">
 
-            <div class="space-y-2">
+            <div class="space-y-2" id="block-results">
                 <button type="button" data-section="results" class="section-toggle w-full flex items-center justify-between text-xs font-bold text-gray-500 uppercase tracking-wider">
                     <span>Results</span>
                     <span class="chevron">▾</span>
@@ -136,7 +149,7 @@
                 </div>
             </div>
 
-            <div class="space-y-2">
+            <div class="space-y-2" id="block-method">
                 <button type="button" data-section="method" class="section-toggle w-full flex items-center justify-between text-xs font-bold text-gray-500 uppercase tracking-wider">
                     <span>Method</span>
                     <span class="chevron">▾</span>
@@ -311,7 +324,148 @@
                 },
             },
         },
+        produce: {
+            label: 'Produce', icon: '🥔',
+            items: {
+                'potato': {
+                    label: 'Potato', icon: '🥔',
+                    prepGuide: {
+                        cleaning: [
+                            'Scrub under cold running water with a vegetable brush to remove dirt.',
+                            'Cut away any eyes, sprouts, or green-tinged skin (green = solanine, mildly toxic).',
+                            'Peel if the method calls for it — skins are otherwise fine to leave on.',
+                        ],
+                        destarch: [
+                            'Cut into the size/shape the method needs.',
+                            'Soak in a bowl of plain cold water for 30 min (up to overnight in the fridge) to draw out surface starch.',
+                            'Drain, rinse under cold water, then pat completely dry with a tea towel before cooking.',
+                        ],
+                        methods: [
+                            {
+                                id: 'chips', label: 'Chips / Fries',
+                                steps: [
+                                    'Peel and cut into ~1cm x 1cm batons.',
+                                    'Cold-water destarch soak (see above), then pat thoroughly dry.',
+                                    'Par-boil in salted water with ½ tsp bicarbonate of soda per litre, 5–6 min, until edges just soften but centres are still firm.',
+                                    'Drain, then shake in the colander to rough up the edges; let steam-dry a few minutes.',
+                                    'Fry or bake: deep fry at 130–140°C for 5–6 min (cook through), cool, then fry again at 180–190°C for 2–3 min to crisp — or toss in oil and oven-bake at 220°C (425°F) 25–35 min, flipping halfway.',
+                                ],
+                            },
+                            {
+                                id: 'curry', label: 'Curry',
+                                steps: [
+                                    'Peel and cut into 2–3cm chunks.',
+                                    'Par-boil in salted water 5–7 min until just tender on the outside but firm in the centre (bicarb soda not needed here).',
+                                    'Drain and add to the curry sauce.',
+                                    'Simmer 10–15 min until fully tender, stirring gently so the chunks don\'t break apart.',
+                                ],
+                            },
+                            {
+                                id: 'soup', label: 'Soup',
+                                steps: [
+                                    'Peel and dice into ~2cm cubes.',
+                                    'Simmer in stock 15–20 min until fork-tender (falls apart easily).',
+                                    'Mash or blend until smooth, thinning with reserved stock or cream to taste.',
+                                ],
+                            },
+                            {
+                                id: 'mash', label: 'Mash',
+                                steps: [
+                                    'Peel and cut into even chunks (or boil whole).',
+                                    'Boil in salted water 20–25 min until knife-tender.',
+                                    'Drain thoroughly, let steam off 1–2 min, then mash with butter and warm milk.',
+                                ],
+                            },
+                        ],
+                    },
+                },
+                'sweet-potato': {
+                    label: 'Sweet Potato', icon: '🍠',
+                    prepGuide: {
+                        cleaning: [
+                            'Scrub under cold running water; cut away any blemishes.',
+                            'Peel if desired — the skin is edible and thin, so peeling is optional.',
+                        ],
+                        destarch: [
+                            'Cut into the size the method needs.',
+                            'Soak in plain cold water 30–60 min (less critical than white potato, but still improves crisping for fries).',
+                            'Drain and pat very dry before cooking.',
+                        ],
+                        methods: [
+                            {
+                                id: 'fries', label: 'Fries',
+                                steps: [
+                                    'Peel and cut into batons.',
+                                    'Cold-water destarch soak (see above), then pat very dry.',
+                                    'Toss in oil and, optionally, 1–2 tbsp cornstarch per 500g for extra crispness.',
+                                    'Bake at 220°C (425°F) 25–30 min flipping halfway, or air-fry at 190°C for 15–20 min.',
+                                ],
+                            },
+                            {
+                                id: 'curry', label: 'Curry',
+                                steps: [
+                                    'Peel and cut into 2–3cm cubes — no destarch soak needed.',
+                                    'Add directly to the curry sauce (sweet potato cooks fast and holds its shape).',
+                                    'Simmer 15–20 min until tender.',
+                                ],
+                            },
+                            {
+                                id: 'soup', label: 'Soup',
+                                steps: [
+                                    'Peel and cube.',
+                                    'Simmer in stock 15–20 min until tender.',
+                                    'Blend until smooth.',
+                                ],
+                            },
+                        ],
+                    },
+                },
+                'apple': {
+                    label: 'Apple', icon: '🍎',
+                    prepGuide: {
+                        cleaning: [
+                            'Rinse under cold water, rubbing off any wax or residue.',
+                            'Peel with a vegetable peeler if the method wants it (skin-on is fine once cooked soft/blended).',
+                            'Core with a corer or knife: quarter, then cut out the core from each wedge.',
+                            'To stop cut apple browning, toss slices in water with 1 tbsp lemon juice per cup while you prep the rest.',
+                        ],
+                        destarch: null,
+                        methods: [
+                            {
+                                id: 'sauce', label: 'Apple Sauce',
+                                steps: [
+                                    'Peel, core, and chop into chunks.',
+                                    'Simmer in a splash of water or apple juice with cinnamon/sugar to taste, covered, 15–20 min until very soft.',
+                                    'Mash or blend to the texture you want.',
+                                ],
+                            },
+                            {
+                                id: 'pie', label: 'Pie Filling',
+                                steps: [
+                                    'Peel, core, and slice thinly (~5mm).',
+                                    'Toss with sugar, cinnamon, lemon juice, and a thickener (cornstarch or flour); let macerate 15 min.',
+                                    'Fill the pastry and bake at 190–200°C (375–400°F) 40–50 min until bubbling and the apples are tender.',
+                                ],
+                            },
+                            {
+                                id: 'baked', label: 'Baked Whole',
+                                steps: [
+                                    'Core whole apples, leaving them intact; score the skin around the middle.',
+                                    'Stuff the cavity with butter, sugar, cinnamon, and (optionally) chopped nuts.',
+                                    'Bake at 180°C (350°F) 30–40 min until tender.',
+                                ],
+                            },
+                        ],
+                    },
+                },
+            },
+        },
     };
+
+    // Produce items carry a `prepGuide` instead of ratio/time/release/soak — they
+    // aren't pressure-cook ratios at all, so render() branches into renderPrepGuide()
+    // for them rather than forcing fake values through the ratio-based path.
+    const isPrepItem = (item) => !!item.prepGuide;
 
     const RELEASE_INSTRUCTIONS = {
         '10 Min NPR': 'Let the pressure release naturally for 10 minutes, then quick-release any remainder.',
@@ -327,7 +481,8 @@
 
     const currentItem = () => categories[currentCategory].items[currentItemId];
 
-    let soakHours = currentItem().defaultSoakMinutes / 60;
+    let soakHours = (currentItem().defaultSoakMinutes || 0) / 60;
+    let selectedMethodId = null;
 
     const soakFraction = (item, hours) => {
         if (!item.soak || item.soakMinutes <= 0) return 0;
@@ -426,6 +581,13 @@
         return steps;
     };
 
+    const buildPrepList = (heading, lines) => {
+        if (!lines) return '';
+        const items = lines.map((l) => `<li>${l}</li>`).join('');
+        return `<h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">${heading}</h4>
+                 <ul class="list-disc list-inside text-sm text-slate-700 space-y-1">${items}</ul>`;
+    };
+
     const categoryGrid = document.getElementById('category-grid');
     const itemGrid = document.getElementById('item-grid');
     const weightInput = document.getElementById('weight');
@@ -442,6 +604,15 @@
     const methodList = document.getElementById('method-list');
     const waterUnitToggle = document.getElementById('water-unit-toggle');
     const waterUnitLabel = document.getElementById('water-unit-label');
+    const blockWeight = document.getElementById('block-weight');
+    const blockSoak = document.getElementById('block-soak');
+    const blockResults = document.getElementById('block-results');
+    const blockMethod = document.getElementById('block-method');
+    const blockPrepGuide = document.getElementById('block-prepguide');
+    const prepCleaning = document.getElementById('prep-cleaning');
+    const prepDestarch = document.getElementById('prep-destarch');
+    const prepMethodTabs = document.getElementById('prep-method-tabs');
+    const prepSteps = document.getElementById('prep-steps');
 
     let weightUnit = 'g';
     let waterUnit = 'mL';
@@ -465,9 +636,42 @@
     buildUnitToggle(weightUnitToggle, WEIGHT_UNITS, (id) => { weightUnit = id; });
     buildUnitToggle(waterUnitToggle, WATER_UNITS, (id) => { waterUnit = id; });
 
+    function renderPrepGuide(item) {
+        const g = item.prepGuide;
+
+        prepCleaning.innerHTML = buildPrepList('Cleaning', g.cleaning);
+        prepDestarch.innerHTML = buildPrepList('Destarch (cold-water soak)', g.destarch);
+
+        prepMethodTabs.innerHTML = '';
+        const unitBtnClass = (active) => `${UNIT_BTN_BASE} ${active
+            ? 'bg-blue-600 text-white border-blue-600'
+            : 'bg-gray-50 text-gray-500 border-gray-200 hover:bg-gray-100'}`;
+        const makeTab = (id, label) => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.textContent = label;
+            btn.className = unitBtnClass(selectedMethodId === id);
+            btn.addEventListener('click', () => { selectedMethodId = id; render(); });
+            prepMethodTabs.appendChild(btn);
+        };
+        makeTab(null, 'Overview');
+        g.methods.forEach((m) => makeTab(m.id, m.label));
+
+        const methodsToShow = selectedMethodId === null
+            ? g.methods
+            : g.methods.filter((m) => m.id === selectedMethodId);
+        prepSteps.innerHTML = methodsToShow.map((m) => `
+            <div>
+                <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">${m.label}</h4>
+                <ol class="list-decimal list-inside space-y-1.5 text-sm text-slate-700 bg-slate-50 border border-slate-200 rounded-xl p-4">
+                    ${m.steps.map((s) => `<li>${s}</li>`).join('')}
+                </ol>
+            </div>`).join('');
+    }
+
     // --- Collapsible sections ---
     const sectionExpanded = {
-        category: true, weight: true, type: true, soak: true, results: true, method: false,
+        category: true, weight: true, type: true, soak: true, prepguide: true, results: true, method: false,
     };
 
     function applySectionState(id) {
@@ -498,7 +702,8 @@
         btn.addEventListener('click', () => {
             currentCategory = id;
             currentItemId = Object.keys(categories[id].items)[0];
-            soakHours = currentItem().defaultSoakMinutes / 60;
+            soakHours = (currentItem().defaultSoakMinutes || 0) / 60;
+            selectedMethodId = null;
             render();
         });
         categoryGrid.appendChild(btn);
@@ -515,7 +720,8 @@
             btn.innerHTML = `<span class="text-2xl">${item.icon}</span>${item.label}`;
             btn.addEventListener('click', () => {
                 currentItemId = id;
-                soakHours = item.defaultSoakMinutes / 60;
+                soakHours = (item.defaultSoakMinutes || 0) / 60;
+                selectedMethodId = null;
                 render();
             });
             itemGrid.appendChild(btn);
@@ -575,6 +781,18 @@
 
         weightLabel.textContent = weightLabelFor(currentCategory);
         itemLabel.textContent = itemLabelFor(currentCategory);
+
+        const prepMode = isPrepItem(item);
+        blockWeight.classList.toggle('hidden', prepMode);
+        blockSoak.classList.toggle('hidden', prepMode);
+        blockResults.classList.toggle('hidden', prepMode);
+        blockMethod.classList.toggle('hidden', prepMode);
+        blockPrepGuide.classList.toggle('hidden', !prepMode);
+
+        if (prepMode) {
+            renderPrepGuide(item);
+            return;
+        }
 
         weightInput.value = formatWeight(weight, weightUnit, item);
         const unitBtnClass = (active) => `${UNIT_BTN_BASE} ${active

@@ -47,6 +47,14 @@ optionally adjust soak time, get water/pressure-time/release-method plus a gener
   conversion for dry weight needs a per-item `gramsPerCup` density figure (water doesn't, since
   it's converted by pure mass↔volume math). Switching category/item while in "cup" mode
   re-converts through the new item's own `gramsPerCup` — expected, since cups aren't canonical.
+- Non-ratio items (produce prep guides) use `item.prepGuide = {cleaning, destarch, methods}`
+  instead of `ratio`/`time`/`release`/`soak` — `isPrepItem()` checks for `prepGuide` presence.
+  `render()` branches early into `renderPrepGuide()`, hiding the Weight/Soak/Results/Method
+  blocks (each wrapped in an id'd `block-*` div: `block-weight`/`block-soak`/`block-results`/
+  `block-method`/`block-prepguide`) and showing Cleaning/Destarch lists plus an Overview/per-dish
+  method tab selector (`selectedMethodId`, reset to `null` alongside `soakHours` on every
+  category/item switch). Prep items never reach `calculateWater`/`activeRatio`/`activeTime`/
+  `generateMethodSteps` — those stay untouched and still assume exactly one ratio/time/release.
 
 ## Roadmap / TODO
 
@@ -67,6 +75,11 @@ just the at-a-glance summary. Update both the issue and this list if scope chang
       (`components: [{ref, share}, ...]`) before more combo dishes can be added without more
       one-off special-casing. Most architecturally involved item here — worth a design pass
       before diving in.
+- [ ] **Produce prep guide (potatoes, sweet potatoes, apples)** — [#9](https://github.com/Purple-Drain/instant-pot-calculator/issues/9).
+      A `produce` category for items that aren't dry-ingredient pressure-cook ratios — cleaning/
+      destarch prep plus dish-based cooking steps (`prepGuide: {cleaning, destarch, methods}`),
+      rendered via a sibling `renderPrepGuide()` path with Results/Soak/Method swapped out rather
+      than forced through the ratio/time schema.
 
 When one of these ships: check its box here, close/leave-closed the linked issue, and fold
 anything noteworthy about the final approach into the Architecture section above so the next
