@@ -357,7 +357,7 @@
             label: 'Congee', icon: '🥣',
             items: {
                 'plain': {
-                    label: 'Plain Congee', icon: '🥣',
+                    label: 'Plain Congee', icon: '🥣', ingredientLabel: 'Rice',
                     ratio: 8.0, time: 20, release: 'Full NPR', gramsPerCup: 185,
                     soakMinutes: 0, defaultSoakMinutes: 0,
                     soak: null,
@@ -365,7 +365,7 @@
                     warning: '⚠️ Congee foams and expands a lot — never fill the pot past the half-full line, and always let the pressure release fully and naturally (no quick release) to avoid clogging the valve with starchy foam.',
                 },
                 'beef-mince': {
-                    label: 'Beef Mince Congee', icon: '🥩',
+                    label: 'Beef Mince Congee', icon: '🥩', ingredientLabel: 'Rice',
                     ratio: 8.0, time: 20, release: 'Full NPR', gramsPerCup: 185,
                     soakMinutes: 0, defaultSoakMinutes: 0,
                     soak: null,
@@ -637,9 +637,10 @@
 
     const generateMethodSteps = (item, water, time, hours, liquid) => {
         const steps = [];
+        const ingredientLabel = (item.ingredientLabel || item.label).toLowerCase();
         if (item.methodIntro) steps.push(...item.methodIntro);
         if (!item.skipRinse) {
-            steps.push(`Rinse the dry ${item.label.toLowerCase()} under cold water until it runs clear.`);
+            steps.push(`Rinse the dry ${ingredientLabel} under cold water until it runs clear.`);
         }
         if (item.soak && hours > 0) {
             const hrsText = hours === 1 ? '1 hr' : `${hours} hrs`;
@@ -649,7 +650,7 @@
             steps.push('Boil hard, uncovered, for 10 minutes to neutralize natural toxins, then proceed.');
         }
         const liquidWord = liquid ? liquid.label.toLowerCase() : 'water';
-        steps.push(`Add the ${item.label.toLowerCase()} to the Instant Pot with ${water} mL ${liquidWord}.`);
+        steps.push(`Add the ${ingredientLabel} to the Instant Pot with ${water} mL ${liquidWord}.`);
         steps.push('Close the lid and set the valve to Sealing.');
         steps.push(`Cook on High Pressure for ${time} min.`);
         steps.push(RELEASE_INSTRUCTIONS[item.release] || `Release: ${item.release}.`);

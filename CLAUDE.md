@@ -34,7 +34,10 @@ optionally adjust soak time, get water/pressure-time/release-method plus a gener
   deliberately separate from `warning`, since `warning` now also covers non-toxin safety notes
   like congee foaming and a shared `warning` trigger would print a false toxin-boil step),
   optional `methodIntro`/`methodOutro` (extra Method steps), optional `skipRinse`, optional
-  `liquidOptions` (see the congee bullet below).
+  `liquidOptions` (see the congee bullet below), optional `ingredientLabel` (overrides `label`
+  in the generated "Rinse the dry ___"/"Add the ___" Method steps — needed whenever `label` names
+  a finished dish rather than the raw dry ingredient, e.g. congee items use `ingredientLabel:
+  'Rice'` so Method text says "rice", not "plain congee").
 - Soak interpolation: `soakFraction()` → 0..1 clamped at the recommended cap; `activeRatio()`/
   `activeTime()` linearly interpolate between unsoaked and `soak` values using that fraction.
 - UI: a category selector, then an item grid, a weight input, a soak-hours input (stepper +/-,
