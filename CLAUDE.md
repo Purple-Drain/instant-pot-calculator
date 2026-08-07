@@ -29,8 +29,12 @@ optionally adjust soak time, get water/pressure-time/release-method plus a gener
   unsoaked), `release`, `soakMinutes` (point where soak benefit caps), `defaultSoakMinutes`
   (what the soak input starts at — usually equals `soakMinutes`, but can be lower when soaking
   is optional, e.g. Mujaddara defaults to 0), `soak: {ratio, time} | null`, `note`, optional
-  `warning` (persistent safety text, e.g. kidney beans), optional `methodIntro`/`methodOutro`
-  (extra Method steps), optional `skipRinse`.
+  `warning` (persistent safety banner text, e.g. kidney beans' toxin warning or congee's foaming
+  warning), optional `toxinBoil` (drives the "boil hard to neutralize toxins" Method step —
+  deliberately separate from `warning`, since `warning` now also covers non-toxin safety notes
+  like congee foaming and a shared `warning` trigger would print a false toxin-boil step),
+  optional `methodIntro`/`methodOutro` (extra Method steps), optional `skipRinse`, optional
+  `liquidOptions` (see the congee bullet below).
 - Soak interpolation: `soakFraction()` → 0..1 clamped at the recommended cap; `activeRatio()`/
   `activeTime()` linearly interpolate between unsoaked and `soak` values using that fraction.
 - UI: a category selector, then an item grid, a weight input, a soak-hours input (stepper +/-,
@@ -55,6 +59,22 @@ optionally adjust soak time, get water/pressure-time/release-method plus a gener
   method tab selector (`selectedMethodId`, reset to `null` alongside `soakHours` on every
   category/item switch). Prep items never reach `calculateWater`/`activeRatio`/`activeTime`/
   `generateMethodSteps` — those stay untouched and still assume exactly one ratio/time/release.
+- `congee` category (Plain Congee, Beef Mince Congee) is an ordinary ratio-based category — no
+  new architecture needed for the higher `ratio` (~8 mL/g, ~6:1 water:rice by volume vs ~1.1–1.25
+  for steamed rice) or the new `'Full NPR'` entry in `RELEASE_INSTRUCTIONS` (congee foams under
+  pressure, so quick-releasing needs its own explicit release string). It does introduce one
+  reusable pattern: `item.liquidOptions = {choices: [{id, label}, ...], recommended: id}`, an
+  optional field checked via presence like `warning`/`methodIntro`, that renders a small
+  selector (currently Water/Stock/Half & Half on Beef Mince Congee) inside the Results card. It
+  only ever changes displayed text — the Results "Add ___" label and the liquid word in the
+  generated Method step — and never touches `calculateWater`/`activeRatio`/`activeTime`. The
+  selection lives in `selectedLiquidId` state, declared next to `selectedMethodId` and resolved
+  via `selectedLiquidChoice(item, id)` (falls back to `recommended` if the id doesn't match);
+  reset to `item.liquidOptions.recommended` (or `null` if absent) on every category/item switch,
+  same lifecycle as `soakHours`/`selectedMethodId`. Because choices are per-item rather than a
+  fixed global list (unlike the weight/water unit toggles, built once via `buildUnitToggle`),
+  the toggle buttons are rebuilt every `render()` call, the same way the prep-guide's method tabs
+  already are.
 
 ## Roadmap / TODO
 
@@ -80,6 +100,11 @@ just the at-a-glance summary. Update both the issue and this list if scope chang
       destarch prep plus dish-based cooking steps (`prepGuide: {cleaning, destarch, methods}`),
       rendered via a sibling `renderPrepGuide()` path with Results/Soak/Method swapped out rather
       than forced through the ratio/time schema.
+- [x] **Congee category + reusable liquid-type-selector pattern** — no tracked issue; net-new
+      scope agreed directly with the user, not part of #4/#5/#7/#9. Shipped the `congee` category
+      (Plain Congee, Beef Mince Congee) and the `item.liquidOptions` field/selector pattern
+      described in Architecture above, available to any future item that wants a Water/Stock/etc.
+      choice.
 
 When one of these ships: check its box here, close/leave-closed the linked issue, and fold
 anything noteworthy about the final approach into the Architecture section above so the next

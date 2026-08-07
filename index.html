@@ -137,9 +137,13 @@
                 </button>
                 <div id="section-results" class="section-body">
                     <div class="bg-slate-50 p-5 rounded-xl border border-slate-200 space-y-4 shadow-inner">
+                        <div id="liquid-select" class="hidden pb-3 border-b border-slate-200">
+                            <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 text-center">Cooking Liquid</div>
+                            <div id="liquid-toggle" class="flex justify-center gap-2 flex-wrap"></div>
+                        </div>
                         <div class="flex justify-between items-end border-b border-slate-200 pb-3">
                             <div>
-                                <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Add Water</div>
+                                <div id="water-label" class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Add Water</div>
                                 <div class="flex items-center gap-2">
                                     <span class="text-2xl">💧</span>
                                     <span id="water" class="text-4xl font-black text-blue-600">0</span>
@@ -300,6 +304,7 @@
                     soak: { ratio: 2.5, time: 12 },
                     note: '💧 Soaked overnight (8 hrs, recommended): time drops from 35 to 12 min',
                     warning: '⚠️ Dried kidney beans contain a natural toxin that only a full rolling boil destroys. After soaking, boil hard (uncovered) 10 min before pressure cooking — do not rely on pressure cooking alone.',
+                    toxinBoil: true,
                 },
                 'cannellini': {
                     label: 'Cannellini', icon: '⚪',
@@ -308,6 +313,7 @@
                     soak: { ratio: 2.5, time: 12 },
                     note: '💧 Soaked overnight (8 hrs, recommended): time drops from 35 to 12 min',
                     warning: '⚠️ Same bean family as kidney beans — after soaking, boil hard (uncovered) 10 min before pressure cooking to neutralize natural toxins.',
+                    toxinBoil: true,
                 },
                 'black': {
                     label: 'Black Beans', icon: '⚫',
@@ -344,6 +350,40 @@
                     note: 'Weight = combined lentils + rice, split 1:1 by weight. Traditional recipe skips soaking; pre-soaking the lentils ~1 hr trims a couple minutes if you want to.',
                     methodIntro: ['Thinly slice 2 onions and fry in oil until deep golden brown; set aside for garnish.'],
                     methodOutro: 'Fluff, top with the caramelized onions, and serve warm.',
+                },
+            },
+        },
+        congee: {
+            label: 'Congee', icon: '🥣',
+            items: {
+                'plain': {
+                    label: 'Plain Congee', icon: '🥣',
+                    ratio: 8.0, time: 20, release: 'Full NPR', gramsPerCup: 185,
+                    soakMinutes: 0, defaultSoakMinutes: 0,
+                    soak: null,
+                    note: 'Congee uses ~6–8x water to rice by volume (vs ~1:1 for steamed rice) — no soak needed, the long cook and natural release break the grains down into porridge on their own.',
+                    warning: '⚠️ Congee foams and expands a lot — never fill the pot past the half-full line, and always let the pressure release fully and naturally (no quick release) to avoid clogging the valve with starchy foam.',
+                },
+                'beef-mince': {
+                    label: 'Beef Mince Congee', icon: '🥩',
+                    ratio: 8.0, time: 20, release: 'Full NPR', gramsPerCup: 185,
+                    soakMinutes: 0, defaultSoakMinutes: 0,
+                    soak: null,
+                    note: 'Weight = dry rice only — the beef mince and aromatics are browned and stirred in separately, see Method below.',
+                    warning: '⚠️ Congee foams and expands a lot — never fill the pot past the half-full line, and always let the pressure release fully and naturally (no quick release) to avoid clogging the valve with starchy foam.',
+                    methodIntro: [
+                        'Mince 3 cloves garlic, grate 2cm fresh ginger, and finely slice the white parts of 2 spring onions (keep the green parts for garnish).',
+                        'On Sauté, brown 300g beef mince in a little oil, breaking it up, until no longer pink; stir in the garlic, ginger, and spring onion whites for 1 min, then turn off Sauté.',
+                    ],
+                    methodOutro: 'Stir the beef mince mixture back through the congee, then top with the reserved spring onion greens, a drizzle of sesame oil, and white pepper to taste.',
+                    liquidOptions: {
+                        choices: [
+                            { id: 'water', label: 'Water' },
+                            { id: 'stock', label: 'Stock' },
+                            { id: 'half', label: 'Half Water / Half Stock' },
+                        ],
+                        recommended: 'half',
+                    },
                 },
             },
         },
@@ -497,6 +537,7 @@
         '10 Min NPR': 'Let the pressure release naturally for 10 minutes, then quick-release any remainder.',
         '15 Min NPR': 'Let the pressure release naturally for 15 minutes, then quick-release any remainder.',
         'Quick Release': 'Use Quick Release to vent the pressure as soon as cooking finishes.',
+        'Full NPR': 'Let the pressure release fully and naturally — do not quick-release. Congee foams as it cooks, and releasing early or quickly can spit hot starchy liquid through the valve; a full natural release (roughly 15–25 min) is the safe way to vent.',
     };
 
     const SOAK_STEP = 0.5;
@@ -509,6 +550,7 @@
 
     let soakHours = (currentItem().defaultSoakMinutes || 0) / 60;
     let selectedMethodId = null;
+    let selectedLiquidId = currentItem().liquidOptions ? currentItem().liquidOptions.recommended : null;
 
     const soakFraction = (item, hours) => {
         if (!item.soak || item.soakMinutes <= 0) return 0;
@@ -535,7 +577,14 @@
 
     const weightLabelFor = (categoryId) => {
         if (categoryId === 'combo') return 'Combined Dry Weight — Lentils + Rice, 1:1';
+        if (categoryId === 'congee') return 'Dry Rice Weight (for Congee)';
         return `Dry ${categories[categoryId].label} Weight`;
+    };
+
+    const selectedLiquidChoice = (item, id) => {
+        if (!item.liquidOptions) return null;
+        return item.liquidOptions.choices.find((c) => c.id === id)
+            || item.liquidOptions.choices.find((c) => c.id === item.liquidOptions.recommended);
     };
 
     const itemLabelFor = (categoryId) => (categoryId === 'combo' ? 'Dish' : `${categories[categoryId].label} Type`);
@@ -586,7 +635,7 @@
         return unit === 'floz' ? v.toFixed(1) : v.toFixed(2);
     };
 
-    const generateMethodSteps = (item, water, time, hours) => {
+    const generateMethodSteps = (item, water, time, hours, liquid) => {
         const steps = [];
         if (item.methodIntro) steps.push(...item.methodIntro);
         if (!item.skipRinse) {
@@ -596,10 +645,11 @@
             const hrsText = hours === 1 ? '1 hr' : `${hours} hrs`;
             steps.push(`Soak in water for ${hrsText}, then drain.`);
         }
-        if (item.warning) {
+        if (item.toxinBoil) {
             steps.push('Boil hard, uncovered, for 10 minutes to neutralize natural toxins, then proceed.');
         }
-        steps.push(`Add the ${item.label.toLowerCase()} to the Instant Pot with ${water} mL water.`);
+        const liquidWord = liquid ? liquid.label.toLowerCase() : 'water';
+        steps.push(`Add the ${item.label.toLowerCase()} to the Instant Pot with ${water} mL ${liquidWord}.`);
         steps.push('Close the lid and set the valve to Sealing.');
         steps.push(`Cook on High Pressure for ${time} min.`);
         steps.push(RELEASE_INSTRUCTIONS[item.release] || `Release: ${item.release}.`);
@@ -637,6 +687,9 @@
     const soakResetBtn = document.getElementById('soak-reset');
     const noteEl = document.getElementById('note');
     const warningEl = document.getElementById('warning');
+    const liquidSelect = document.getElementById('liquid-select');
+    const liquidToggle = document.getElementById('liquid-toggle');
+    const waterLabelEl = document.getElementById('water-label');
     const methodList = document.getElementById('method-list');
     const waterUnitToggle = document.getElementById('water-unit-toggle');
     const waterUnitLabel = document.getElementById('water-unit-label');
@@ -761,6 +814,7 @@
             currentItemId = Object.keys(categories[id].items)[0];
             soakHours = (currentItem().defaultSoakMinutes || 0) / 60;
             selectedMethodId = null;
+            selectedLiquidId = currentItem().liquidOptions ? currentItem().liquidOptions.recommended : null;
             render();
         });
         categoryGrid.appendChild(btn);
@@ -779,6 +833,7 @@
                 currentItemId = id;
                 soakHours = (item.defaultSoakMinutes || 0) / 60;
                 selectedMethodId = null;
+                selectedLiquidId = item.liquidOptions ? item.liquidOptions.recommended : null;
                 render();
             });
             itemGrid.appendChild(btn);
@@ -878,17 +933,35 @@
             warningEl.classList.add('hidden');
         }
 
+        const liquid = selectedLiquidChoice(item, selectedLiquidId);
+        if (item.liquidOptions) {
+            liquidSelect.classList.remove('hidden');
+            liquidToggle.innerHTML = '';
+            item.liquidOptions.choices.forEach((choice) => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                const isRecommended = choice.id === item.liquidOptions.recommended;
+                btn.textContent = isRecommended ? `⭐ ${choice.label}` : choice.label;
+                btn.className = unitBtnClass(selectedLiquidId === choice.id);
+                btn.addEventListener('click', () => { selectedLiquidId = choice.id; render(); });
+                liquidToggle.appendChild(btn);
+            });
+        } else {
+            liquidSelect.classList.add('hidden');
+        }
+
         const water = calculateWater(weight, item, soakHours);
         const time = activeTime(item, soakHours);
 
         document.getElementById('water').textContent = formatWater(water, waterUnit);
         waterUnitLabel.textContent = WATER_UNITS.find((u) => u.id === waterUnit).label;
+        waterLabelEl.textContent = liquid ? `Add ${liquid.label}` : 'Add Water';
         document.getElementById('time').textContent = time;
         document.getElementById('release').textContent = item.release;
         document.getElementById('ratio').textContent = `Ratio 1 : ${activeRatio(item, soakHours).toFixed(2)} (dry : water)`;
 
         methodList.innerHTML = '';
-        generateMethodSteps(item, water, time, soakHours).forEach((step) => {
+        generateMethodSteps(item, water, time, soakHours, liquid).forEach((step) => {
             const li = document.createElement('li');
             li.textContent = step;
             methodList.appendChild(li);
