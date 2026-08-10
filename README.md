@@ -23,18 +23,18 @@ Water is always rounded to the nearest 10 mL.
 | --- | --- | --- | --- | --- | --- |
 | Rice | White Basmati | 1.20 / 4 min | 30 min | 1.00 / 1 min | 10 Min NPR |
 | Rice | Jasmine | 1.10 / 3 min | 30 min (optional) | 1.00 / 2 min | 10 Min NPR |
-| Rice | Brown Basmati | 1.25 / 15 min | 2 hrs | 1.10 / 12 min | 10 Min NPR |
+| Rice | Brown Basmati | 1.25 / 20 min | 2 hrs | 1.10 / 16 min | 10 Min NPR |
 | Rice | Standard Brown | 1.25 / 22 min | 2 hrs | 1.10 / 18 min | 10 Min NPR |
 | Oats | Steel-Cut | 4.0 / 4 min | 8 hrs | 3.0 / 1 min | 10 Min NPR |
-| Oats | Rolled (Old-Fashioned) | 3.0 / 1 min | not needed | — | Quick Release |
+| Oats | Rolled (Old-Fashioned) | 3.0 / 1 min | not needed | — | 10 Min NPR |
 | Quinoa | Quinoa | 1.4 / 1 min | 20 min | 1.3 / 1 min | Quick Release |
 | Lentils | Red (Split) | 2.2 / 2 min | not needed | — | Quick Release |
-| Lentils | Brown/Green | 2.2 / 9 min | 1 hr | 2.0 / 6 min | 10 Min NPR |
+| Lentils | Brown/Green | 2.2 / 9 min | 1 hr | 1.20 / 6 min | 10 Min NPR |
 | Beans | Chickpeas | 3.6 / 38 min | 8 hrs | 2.6 / 13 min | 15 Min NPR |
-| Beans | Kidney (Red) | 3.5 / 35 min | 8 hrs | 2.5 / 12 min | 15 Min NPR |
+| Beans | Kidney (Red) | 3.5 / 45 min | 8 hrs | 2.5 / 12 min | 15 Min NPR |
 | Beans | Cannellini | 3.5 / 35 min | 8 hrs | 2.5 / 12 min | 15 Min NPR |
 | Beans | Black Beans | 3.3 / 22 min | 8 hrs | 2.4 / 10 min | 15 Min NPR |
-| Beans | Pinto Beans | 3.3 / 25 min | 8 hrs | 2.4 / 11 min | 15 Min NPR |
+| Beans | Pinto Beans | 3.3 / 25 min | 8 hrs | 2.4 / 15 min | 15 Min NPR |
 | Beans | Ful Medames (Fava) | 3.8 / 45 min | 10 hrs | 2.8 / 20 min | 15 Min NPR |
 | Combo | Mujaddara (Lentils+Rice)² | 2.5 / 10 min | 0 (optional 1 hr) | 2.3 / 8 min | 10 Min NPR |
 
