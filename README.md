@@ -21,7 +21,7 @@ Water is always rounded to the nearest 10 mL.
 
 | Category | Item | Unsoaked ratio¹ / time | Recommended soak | Soaked ratio¹ / time | Release |
 | --- | --- | --- | --- | --- | --- |
-| Rice | White Basmati | 1.20 / 4 min | 30 min | 1.05 / 3 min | 10 Min NPR |
+| Rice | White Basmati | 1.20 / 4 min | 30 min | 1.00 / 1 min | 10 Min NPR |
 | Rice | Jasmine | 1.10 / 3 min | 30 min (optional) | 1.00 / 2 min | 10 Min NPR |
 | Rice | Brown Basmati | 1.25 / 15 min | 2 hrs | 1.10 / 12 min | 10 Min NPR |
 | Rice | Standard Brown | 1.25 / 22 min | 2 hrs | 1.10 / 18 min | 10 Min NPR |
