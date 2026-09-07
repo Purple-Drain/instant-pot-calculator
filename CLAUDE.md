@@ -121,3 +121,22 @@ words ("Why the sync failed", "Worktree setup"). Headings are earned: none in a 
 under about 500 words, at most three above it. Structural headings in templates (handoff
 notes, decision records) are exempt. Ported from Purple-Drain/claude-tools#376 so cloud
 sessions that only see this repo follow it too.
+
+## Writing style
+
+No em dashes or en dashes used as punctuation. Use a period, comma, semicolon (to join two
+related independent clauses), parenthesis, or a plain connector ("and"/"but"/"so") instead,
+whichever reads most naturally. Applies to every response and every file Claude writes,
+Claude Code included, not just committed docs.
+
+Avoid other stock AI-writing tells:
+- Overused words: delve, underscore, pivotal, robust, seamless, realm, harness, unlock,
+  tapestry, leverage, align, synergy, navigate, landscape, testament.
+- Filler openers: "In today's fast-paced/rapidly evolving world...", "It's worth noting
+  that...", "Great question!", "Certainly!", "Absolutely!", "I hope this helps!".
+- The false-contrast pattern "It's not just X, it's Y" / "This isn't about X, it's about Y".
+- Hollow intensifiers used as filler: "truly", "genuinely".
+- Forced rule-of-three lists or heavy bolding used as a substitute for deciding what actually
+  matters.
+
+Write the way a careful native English writer would: plain, direct, no throat-clearing.
