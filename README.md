@@ -61,3 +61,8 @@ selected.
 ## Stack
 
 `index.html` and nothing else. Tailwind via CDN, vanilla JS. Served by GitHub Pages from `main` at `/`.
+
+`tools/` holds a dev-only visual check that is not part of the page: `cd tools && npm install &&
+npx playwright install chromium && npm run visual` screenshots every item at 390 px and 1280 px wide
+(into the gitignored `tools/screenshots/`) and fails on script errors, horizontal overflow or
+suspiciously short Method steps.
