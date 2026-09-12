@@ -116,7 +116,7 @@ optionally adjust soak time, get water/pressure-time/release-method plus a gener
   method tab selector (`selectedMethodId`, reset to `null` alongside `soakHours` on every
   category/item switch). Prep items never reach `calculateWater`/`activeRatio`/`activeTime`/
   `generateMethodSteps`; those stay untouched and still assume exactly one ratio/time/release.
-- `congee` category (Plain Congee, Beef Mince Congee) is an ordinary ratio-based category, with no
+- `congee` category (Plain, Brown Basmati, Brown Rice and Beef Mince Congee) is an ordinary ratio-based category, with no
   new architecture needed for the higher `ratio` (~8 mL/g, ~6:1 water:rice by volume vs ~1.1–1.25
   for steamed rice) or the new `'Full NPR'` entry in `RELEASE_INSTRUCTIONS` (congee foams under
   pressure, so quick-releasing needs its own explicit release string). It does introduce one
@@ -132,6 +132,12 @@ optionally adjust soak time, get water/pressure-time/release-method plus a gener
   fixed global list (unlike the weight/water unit toggles, built once via `buildUnitToggle`),
   the toggle buttons are rebuilt every `render()` call, the same way the prep-guide's method tabs
   already are.
+  The brown-rice congee rows (#16) carry congee-specific rules that differ from the steamed-rice
+  rows on purpose: brown basmati congee is never soaked (it disintegrates) and cooks 30 min from
+  dry; brown rice congee soaks overnight, 45 -> 30 min. Don't "harmonise" them with the Rice
+  category. Beef Mince Congee browns the beef on the stove and stirs it in after cooking, never
+  under pressure. #16's own 5.7 L cap (2.5 L liquid + 315 g grains) is covered by the 6 qt
+  half-full warning from `POT_SIZES`, which stays advisory like every other warning.
 
 ## Roadmap / TODO
 
