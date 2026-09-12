@@ -2,6 +2,23 @@
 
 Newest first. Each entry says what shipped, what is open, and what to check first.
 
+## 12.09.26 (evening): Jasmine, pot size, plain mode, visual check, congee
+
+### Shipped
+- #32: a partial Mujaddara soak names its real duration (`soakStep` may be a function).
+- #33: Jasmine 1.1 → 1.2 mL/g. Sources are 1:1 by volume, 1.2 to 1.28 mL/g depending on cup weight.
+- #34: pot size toggle (3 / 6 / 8 qt) feeding `POT_SIZES`. 3 and 6 qt keep a 250 mL floor, not the manual's 375 mL for 6 qt, because 375 would warn on the default screen and Instant Pot's own rice recipes use 1 cup of water.
+- #35: `tools/visual-check.js` (dev-only). 62 screenshots at 390 and 1280 px on first run, 0 problems.
+- #36: plain mode. Method entries may be `{text, plain}`; plain mode also forces water.
+- #37: Brown Basmati Congee (never soaked, 30 min) and Brown Rice Congee (overnight soak, 45 → 30 min); Beef Mince Congee browns the beef on the stove and never pressure cooks it.
+
+### Still open
+- #16: the basmati and oat congee matrix, which needs values from the congee suite.
+- #4, #5, #7: roadmap, unchanged.
+
+### Check first
+- Run `npm run visual` in `tools/` before merging to `main`. Its checks drive the page through clicks and inputs, so they keep working if the page script is ever wrapped.
+
 ## 12.09.26 (afternoon): Mujaddara fix, open items specced
 
 ### Shipped
