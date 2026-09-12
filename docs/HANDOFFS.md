@@ -15,7 +15,7 @@ Newest first. Each entry says what shipped, what is open, and what to check firs
 - #16: congee grain sub-choice and volume cap.
 
 ### Check first
-- A partial Mujaddara soak (e.g. 30 min) prints both the soak step and the par-cook step. That is deliberate: a short soak alone leaves the lentils underdone at 6 min.
+- A partial Mujaddara soak (e.g. 30 min) prints both the soak step, naming the actual duration, and the par-cook step. That is deliberate: a short soak alone leaves the lentils underdone at 6 min. (#27 first shipped the soak step as a fixed "about 1 hr" string; the follow-up made it a function so a 30 min soak no longer reads as 1 hr.)
 
 ## 12.09.26: recipe review follow-ups
 
