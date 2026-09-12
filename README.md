@@ -73,4 +73,6 @@ selected.
 `tools/` holds a dev-only visual check that is not part of the page: `cd tools && npm install &&
 npx playwright install chromium && npm run visual` screenshots every item at 390 px and 1280 px wide
 (into the gitignored `tools/screenshots/`) and fails on script errors, horizontal overflow or
-suspiciously short Method steps.
+suspiciously short Method steps. `npm run method` in the same folder is the Method regression check: every item's
+generated steps, plus the pot-size warnings, plain mode (in both directions) and the Mujaddara
+par-cook paths. Run both before merging to `main`, since it deploys live.
