@@ -240,7 +240,9 @@
                 },
                 'jasmine': {
                     label: 'Jasmine', icon: '🌸', ingredientLabel: 'jasmine rice',
-                    ratio: 1.1, time: 3, release: '10 Min NPR', gramsPerCup: 185,
+                    // 1.2 mL/g: sources are 1:1 by volume, which is 1.2 to 1.28 mL/g
+                    // depending on cup weight (185 to 200 g); 1.2 matches White Basmati.
+                    ratio: 1.2, time: 3, release: '10 Min NPR', gramsPerCup: 185,
                     soakMinutes: 30, defaultSoakMinutes: 0,
                     soak: { ratio: 1.0, time: 2 },
                     note: '💧 Soaking 20–30 min is optional for jasmine: less sticky, 1 min less cook time',
