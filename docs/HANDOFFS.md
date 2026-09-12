@@ -17,18 +17,12 @@ Newest first. Each entry says what shipped, what is open, and what to check firs
 ### Recipe accuracy research (source-checked, not yet applied)
 Results are logged in #26 with sources. No app values were changed this session.
 
-1. Kidney beans: keep. 45 min unsoaked and 12 min soaked sit inside tested recipes' ranges.
+1. Kidney beans: keep (confirmed). 45 min unsoaked and 12 min soaked sit inside tested recipes' ranges.
 2. Brown rice: keep 1.25 / 1.10 mL/g. A proposal to raise it to 1.5 was refuted by the skeptic pass: two weighed, tested recipes use exactly 1.25.
-3. Jasmine: keep. Add a 5 min soaked release only if soaked jasmine is seen clumping.
-4. Mujaddara: likely wrong. Every source soaks or par-cooks the lentils and uses about 1.4 to 1.65 mL/g, against the app's 2.5. Verify, then change the defaults (lentil soak on, about 1.5 mL/g and 6 min soaked, par-cook step when unsoaked).
+3. Jasmine: keep the release; review the drier-than-sources ratio. Add a 5 min soaked release only if soaked jasmine is seen clumping.
+4. Mujaddara: wrong (confirmed). Every source soaks or par-cooks the lentils and uses about 1.4 to 1.65 mL/g, against the app's 2.5. Change the defaults (lentil soak on, about 1.5 mL/g and 6 min soaked, par-cook step when unsoaked).
 
-Skeptic re-checks for items 1, 3 and 4 had not finished by the 14:00 stop. To replay the run in the same Claude Code session (finished agents return from cache):
-
-```
-Workflow({scriptPath: "~/.claude/projects/-root-repos-instant-pot-calculator/7a73fc01-11fa-4e26-8d90-f873fc5ad1dc/workflows/scripts/recipe-accuracy-research-wf_5fabebf1-f47.js", resumeFromRunId: "wf_5fabebf1-f47"})
-```
-
-From a fresh session, rerun the questions instead; that script holds the exact prompts. Apply a change only after a skeptic agrees, then run the headless Method check before merging, since `main` deploys live.
+All eight research and skeptic agents finished before the stop; the full verdicts are on #26. The jasmine check also found the app's 1.1 mL/g is about 15% drier than every source, and the Mujaddara check lists what the implementation needs (per-item soak wording, a par-cook step only when unsoaked). Apply a change only after a skeptic agrees, then run the headless Method check before merging, since `main` deploys live.
 
 ### Still open
 Also tracked as bullets in #26.
