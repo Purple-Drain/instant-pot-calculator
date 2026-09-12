@@ -26,7 +26,7 @@ Your last category, item, weight and unit choices are remembered in `localStorag
 
 | Category | Item | Unsoaked ratio¹ / time | Recommended soak | Soaked ratio¹ / time | Release |
 | --- | --- | --- | --- | --- | --- |
-| Rice | White Basmati | 1.20 / 4 min | 30 min | 1.00 / 1 min | 10 Min NPR |
+| Rice | White Basmati | 1.20 / 4 min | 30 min | 1.00 / 1 min | 10 Min NPR unsoaked, 5 Min NPR soaked³ |
 | Rice | Jasmine | 1.10 / 3 min | 30 min (optional) | 1.00 / 2 min | 10 Min NPR |
 | Rice | Brown Basmati | 1.25 / 20 min | 2 hrs | 1.10 / 16 min | 10 Min NPR |
 | Rice | Standard Brown | 1.25 / 22 min | 2 hrs | 1.10 / 18 min | 10 Min NPR |
@@ -45,6 +45,8 @@ Your last category, item, weight and unit choices are remembered in `localStorag
 
 ¹ Ratio = mL water per gram of dry weight.
 ² Weight entered is the **combined** lentils + rice weight, split 1:1 by weight.
+³ White Basmati is the one item where soaking also shortens the release, not just the ratio/time: pre-softened
+  grains need less residual steam, and cutting that short is what stops them clumping together as they cool.
 
 Figures are community-typical Instant Pot numbers meant for a quick kitchen calculator, not a
 certified reference.

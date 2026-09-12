@@ -205,8 +205,13 @@
     // generic pressure-cooking method (e.g. caramelizing onions for Mujaddara).
     // skipRinse = true skips the generic "rinse" step (oats don't need it).
     // rinseStep (item or category) = replaces the generic rinse wording, e.g.
-    // "pick over for stones" for pulses. defaultOutro (category) = the closing
-    // Method step when an item has no methodOutro ("fluff with a fork" is only
+    // "pick over for stones" for pulses. methodPreCook = extra steps inserted
+    // right before the "add to the Instant Pot" step (e.g. tossing rinsed rice
+    // in a little oil to stop grains clumping). soak.release (optional) swaps
+    // the release method once any soak time is set, since pre-softened grains
+    // need less residual steam; see activeRelease() below. defaultOutro
+    // (category) = the closing Method step when an item has no methodOutro
+    // ("fluff with a fork" is only
     // right for grains).
     // gramsPerCup = approximate weight of 1 US cup of this dry ingredient, only
     // used to convert the weight input to/from "cup" units (water needs no such
@@ -219,8 +224,10 @@
                     label: 'White Basmati', icon: '🍚', ingredientLabel: 'basmati rice',
                     ratio: 1.2, time: 4, release: '10 Min NPR', gramsPerCup: 185,
                     soakMinutes: 30, defaultSoakMinutes: 30,
-                    soak: { ratio: 1.0, time: 1 },
-                    note: '💧 Soaked 30 min: cuts water & 3 min off cook time, fluffier separate grains',
+                    soak: { ratio: 1.0, time: 1, release: '5 Min NPR' },
+                    note: '💧 Soaked 30 min: cuts water & 3 min off cook time, and switches release to 5 Min NPR (down from 10) so the pre-softened grains spend less time under residual steam',
+                    methodPreCook: ['Toss the drained rice with ½ tsp oil or ghee; a light coating keeps surface starch from gluing grains together as they cook.'],
+                    methodOutro: 'Fluff immediately with a fork, then spread over a tray or wide dish for a minute so the steam escapes rather than clumping the grains as they sit.',
                 },
                 'jasmine': {
                     label: 'Jasmine', icon: '🌸', ingredientLabel: 'jasmine rice',
@@ -558,10 +565,11 @@
         '15 Min NPR': 'Let the pressure release naturally for 15 minutes, then quick-release any remainder.',
         'Quick Release': 'Use Quick Release to vent the pressure as soon as cooking finishes.',
         'Full NPR': 'Let the pressure release fully and naturally (roughly 15–25 min) and do not quick-release. Starchy, foamy foods like congee can spit hot liquid through the valve if vented early.',
+        '5 Min NPR': 'Let the pressure release naturally for 5 minutes, then quick-release any remainder.',
     };
 
     // Approximate minutes each release method takes, for the total-time estimate.
-    const RELEASE_MINUTES = { '10 Min NPR': 10, '15 Min NPR': 15, 'Quick Release': 1, 'Full NPR': 20 };
+    const RELEASE_MINUTES = { '10 Min NPR': 10, '15 Min NPR': 15, 'Quick Release': 1, 'Full NPR': 20, '5 Min NPR': 5 };
 
     // Instant Pot needs roughly a cup of thin liquid to come to pressure (a 6 qt
     // pot; 8 qt wants more), and foamy grains/pulses must stay under the
@@ -589,11 +597,20 @@
         return Math.min(Math.max(hours, 0), capHours) / capHours;
     };
 
+    // Release method can switch once any soak time is set: pre-softened grains
+    // don't need as much residual steam, and cutting that short is what stops
+    // them clumping together as they sit. Discrete (not interpolated like
+    // ratio/time) since release methods aren't a continuum.
+    const activeRelease = (item, hours) => {
+        if (item.soak && item.soak.release && hours > 0) return item.soak.release;
+        return item.release;
+    };
+
     // Rough wall-clock estimate: time to reach pressure scales with the liquid
     // volume, then the cook time, then the release.
-    const estimateTotalMinutes = (item, water, time) => {
+    const estimateTotalMinutes = (release, water, time) => {
         const pressurise = water >= 1500 ? 15 : water >= 750 ? 12 : 8;
-        return pressurise + time + (RELEASE_MINUTES[item.release] || 10);
+        return pressurise + time + (RELEASE_MINUTES[release] || 10);
     };
 
     const formatDuration = (hours) => {
@@ -699,6 +716,7 @@
         if (item.toxinBoil) {
             steps.push('Cover with fresh water and boil hard, uncovered, for 10 minutes (on Sauté or the stove) to destroy natural toxins, then drain.');
         }
+        if (item.methodPreCook) steps.push(...item.methodPreCook);
         const liquidWord = liquid ? liquid.label.toLowerCase() : 'water';
         const waterText = unit === 'mL'
             ? `${water} mL`
@@ -706,7 +724,8 @@
         steps.push(`Add the ${ingredientLabel} to the Instant Pot with ${waterText} ${liquidWord}.`);
         steps.push('Close the lid and set the valve to Sealing.');
         steps.push(`Cook on High Pressure for ${time} min.`);
-        steps.push(RELEASE_INSTRUCTIONS[item.release] || `Release: ${item.release}.`);
+        const release = activeRelease(item, hours);
+        steps.push(RELEASE_INSTRUCTIONS[release] || `Release: ${release}.`);
         steps.push(item.methodOutro || category.defaultOutro || 'Fluff with a fork and serve.');
         return steps;
     };
@@ -1079,9 +1098,10 @@
         document.getElementById('water').textContent = formatWater(water, waterUnit);
         waterUnitLabel.textContent = WATER_UNITS.find((u) => u.id === waterUnit).label;
         waterLabelEl.textContent = liquid ? `Add ${liquid.label}` : 'Add Water';
+        const release = activeRelease(item, soakHours);
         document.getElementById('time').textContent = time;
-        totalTimeEl.textContent = `≈ ${estimateTotalMinutes(item, water, time)} min total incl. pressurising & release`;
-        document.getElementById('release').textContent = item.release;
+        totalTimeEl.textContent = `≈ ${estimateTotalMinutes(release, water, time)} min total incl. pressurising & release`;
+        document.getElementById('release').textContent = release;
 
         if (water > 0 && water < MIN_LIQUID_ML) {
             liquidWarningEl.textContent = `⚠️ ${water} mL is under the ~${MIN_LIQUID_ML} mL an Instant Pot needs to reach pressure. Cook a bigger batch, or use pot-in-pot with 250 mL water in the outer pot.`;
