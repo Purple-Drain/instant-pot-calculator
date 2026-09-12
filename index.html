@@ -203,6 +203,8 @@
     // traditional/recommended default (see Mujaddara).
     // methodIntro/methodOutro = optional extra steps prepended/appended to the
     // generic pressure-cooking method (e.g. caramelizing onions for Mujaddara).
+    // Either can be a single string or an array of strings when more than one
+    // extra step is needed (White Basmati's methodOutro is the first array use).
     // skipRinse = true skips the generic "rinse" step (oats don't need it).
     // rinseStep (item or category) = replaces the generic rinse wording, e.g.
     // "pick over for stones" for pulses. methodPreCook = extra steps inserted
@@ -227,7 +229,10 @@
                     soak: { ratio: 1.0, time: 1, release: '5 Min NPR' },
                     note: '💧 Soaked 30 min: cuts water & 3 min off cook time, and switches release to 5 Min NPR (down from 10) so the pre-softened grains spend less time under residual steam',
                     methodPreCook: ['Toss the drained rice with ½ tsp oil or ghee; a light coating keeps surface starch from gluing grains together as they cook.'],
-                    methodOutro: 'Fluff immediately with a fork, then spread over a tray or wide dish for a minute so the steam escapes rather than clumping the grains as they sit.',
+                    methodOutro: [
+                        'Fluff immediately with a fork, lifting from the base rather than stirring.',
+                        'Leave it uncovered, or loosely covered with a tea towel, for a minute or two so the steam escapes, then serve. Sealing the lid back down while it is still steaming is what usually reglues the grains, more than release timing or anything else.',
+                    ],
                 },
                 'jasmine': {
                     label: 'Jasmine', icon: '🌸', ingredientLabel: 'jasmine rice',
@@ -726,7 +731,8 @@
         steps.push(`Cook on High Pressure for ${time} min.`);
         const release = activeRelease(item, hours);
         steps.push(RELEASE_INSTRUCTIONS[release] || `Release: ${release}.`);
-        steps.push(item.methodOutro || category.defaultOutro || 'Fluff with a fork and serve.');
+        const outro = item.methodOutro || category.defaultOutro || 'Fluff with a fork and serve.';
+        steps.push(...(Array.isArray(outro) ? outro : [outro]));
         return steps;
     };
 
