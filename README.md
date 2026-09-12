@@ -7,7 +7,8 @@ dried beans, and a couple of Middle Eastern combo dishes. Single static page, no
 
 ## How it works
 
-1. Pick a category (Rice, Oats, Quinoa, Lentils, Beans, Combo Dishes), then the specific item.
+1. Pick a category (Rice, Oats, Quinoa, Lentils, Beans, Combo Dishes, Congee, Produce), then the
+   specific item. Produce shows a prep guide instead of a pressure-cook calculation.
 2. Enter the dry weight in grams.
 3. If soaking helps for that item, a **Soak Time (hours)** field appears, pre-filled with the
    recommended soak (0 if soaking isn't useful for that item). Water and pressure-cook time
@@ -46,6 +47,10 @@ Your last category, item, weight, unit, pot-size and plain-mode choices are reme
 | Beans | Pinto Beans | 3.3 / 25 min | 8 hrs | 2.4 / 15 min | 15 Min NPR |
 | Beans | Ful Medames (Fava) | 3.8 / 45 min | 10 hrs | 2.8 / 20 min | 15 Min NPR |
 | Combo | Mujaddara (Lentils+Rice)² | 1.5 / 6 min, after a lentil par-cook | 1 hr (lentils only, just-boiled water) | 1.5 / 6 min | 10 Min NPR |
+| Congee | Plain Congee (white rice) | 8.0 / 20 min | not needed | — | Full NPR |
+| Congee | Brown Basmati Congee | 8.0 / 30 min | never (it disintegrates) | — | Full NPR |
+| Congee | Brown Rice Congee | 8.0 / 45 min | 8 hrs | 8.0 / 30 min | Full NPR |
+| Congee | Beef Mince Congee (weight = rice only) | 8.0 / 20 min | not needed | — | Full NPR |
 
 ¹ Ratio = mL water per gram of dry weight.
 ² Weight entered is the **combined** lentils + rice weight, split 1:1 by weight.

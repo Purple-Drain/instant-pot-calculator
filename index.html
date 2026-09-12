@@ -425,20 +425,48 @@
                         plain: 'Stir well; it thickens as it stands, so thin with hot water to taste.',
                     },
                 },
+                // Brown-rice congee values come from the tested congee suite recorded in
+                // #16: brown basmati is never soaked for congee (it disintegrates) and
+                // cooks 30 min from dry; standard brown rice soaks overnight, 45 -> 30 min.
+                'brown-basmati': {
+                    label: 'Brown Basmati Congee', icon: '🌾', ingredientLabel: 'brown basmati rice',
+                    ratio: 8.0, time: 30, release: 'Full NPR', gramsPerCup: 190,
+                    soakMinutes: 0, defaultSoakMinutes: 0,
+                    soak: null,
+                    note: 'Cook brown basmati for congee straight from dry and never soak it: pre-soaked grains disintegrate. 30 min on High Pressure, vs 20 for white rice.',
+                    warning: '⚠️ Congee foams and expands a lot. Never fill the pot past the half-full line, and always let the pressure release fully and naturally (no quick release) to avoid clogging the valve with starchy foam.',
+                    methodOutro: {
+                        text: 'Stir well; it thickens as it stands, so thin with hot water to taste. Season with salt and top with spring onion, ginger, sesame oil, or a soft egg.',
+                        plain: 'Stir well; it thickens as it stands, so thin with hot water to taste.',
+                    },
+                },
+                'brown-rice': {
+                    label: 'Brown Rice Congee', icon: '🟤', ingredientLabel: 'brown rice',
+                    ratio: 8.0, time: 45, release: 'Full NPR', gramsPerCup: 195,
+                    soakMinutes: 480, defaultSoakMinutes: 480,
+                    soak: { ratio: 8.0, time: 30 },
+                    note: '💧 Soaked overnight (8 hrs, recommended): time drops from 45 to 30 min. Standard brown rice holds up to soaking for congee; brown basmati does not, so it has its own no-soak entry.',
+                    warning: '⚠️ Congee foams and expands a lot. Never fill the pot past the half-full line, and always let the pressure release fully and naturally (no quick release) to avoid clogging the valve with starchy foam.',
+                    methodOutro: {
+                        text: 'Stir well; it thickens as it stands, so thin with hot water to taste. Season with salt and top with spring onion, ginger, sesame oil, or a soft egg.',
+                        plain: 'Stir well; it thickens as it stands, so thin with hot water to taste.',
+                    },
+                },
                 'beef-mince': {
                     label: 'Beef Mince Congee', icon: '🥩', ingredientLabel: 'Rice',
                     ratio: 8.0, time: 20, release: 'Full NPR', gramsPerCup: 185,
                     soakMinutes: 0, defaultSoakMinutes: 0,
                     soak: null,
-                    note: 'Weight = dry rice only. The beef mince and aromatics are browned and stirred in separately, see Method below.',
+                    note: 'Weight = dry rice only. The beef mince is browned separately on the stove and stirred in after cooking, so it stays tender; see Method below.',
                     warning: '⚠️ Congee foams and expands a lot. Never fill the pot past the half-full line, and always let the pressure release fully and naturally (no quick release) to avoid clogging the valve with starchy foam.',
-                    // The beef is browned, then lifted out before the rice goes in: it is
-                    // stirred back through after cooking and never pressure cooked (#16).
+                    // The beef is velveted (optional) and browned on the stove, then stirred
+                    // back through after cooking; it is never pressure cooked (#16).
                     methodIntro: [
                         { text: 'Mince 3 cloves garlic, grate 2cm fresh ginger, and finely slice the white parts of 2 spring onions (keep the green parts for garnish).', plain: false },
+                        { text: 'Optional, for silkier mince (velveting): toss the beef mince with 1 tsp cornflour, 1 tbsp soy sauce, 1 tbsp oyster sauce and 1 tsp sesame oil per 300g, and leave it 10 min.', plain: false },
                         {
-                            text: 'On Sauté, brown the beef mince (about 1.5x the dry rice weight, e.g. 300g mince for 200g rice) in a little oil, breaking it up, until no longer pink; stir in the garlic, ginger, and spring onion whites for 1 min. Tip the mixture into a bowl and set it aside (it goes back in after cooking, not under pressure), then turn off Sauté and deglaze with a splash of the cooking liquid so nothing is stuck to the base.',
-                            plain: 'On Sauté, dry-brown the beef mince (about 1.5x the dry rice weight, e.g. 300g mince for 200g rice) with nothing added, breaking it up, until no longer pink. Tip it into a bowl, pour off the fat, and set it aside (it goes back in after cooking, not under pressure), then turn off Sauté and deglaze with a splash of water so nothing is stuck to the base.',
+                            text: 'In a frying pan on the stove, brown the beef mince (about 1.5x the dry rice weight, e.g. 300g mince for 200g rice) in a little oil, breaking it up, until no longer pink; stir in the garlic, ginger, and spring onion whites for 1 min, then set the pan aside off the heat. The beef goes back in after cooking and is never pressure cooked. (No spare pan: do this on Sauté, tip the mixture into a bowl, and deglaze the pot with a splash of the cooking liquid.)',
+                            plain: 'In a frying pan on the stove, dry-brown the beef mince (about 1.5x the dry rice weight, e.g. 300g mince for 200g rice) with nothing added, breaking it up, until no longer pink, then pour off the fat and set it aside off the heat. The beef goes back in after cooking and is never pressure cooked. (No spare pan: do this on Sauté, tip it into a bowl, and deglaze the pot with a splash of water.)',
                         },
                     ],
                     methodOutro: {
