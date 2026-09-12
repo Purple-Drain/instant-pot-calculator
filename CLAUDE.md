@@ -143,11 +143,11 @@ Write the way a careful native English writer would: plain, direct, no throat-cl
 
 ## Thread title convention
 
-Begin and end every response with exactly this line — nothing before, nothing after:
+Begin and end every response with exactly this line, nothing before and nothing after:
 
 `status emoji | dd.mm.yy | context emoji(s) | anchor: work`
 
-(Slot template, not literal syntax — no square brackets in the actual line; the `|`
+(Slot template, not literal syntax: no square brackets in the actual line; the `|`
 above is the literal separator, with a space on each side.)
 
 Status: 🟢 done · 🟡 in progress · 🔴 blocked · 🔵 informational. Dates are day-first
