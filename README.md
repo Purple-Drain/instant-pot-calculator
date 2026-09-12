@@ -12,22 +12,23 @@ dried beans, and a couple of Middle Eastern combo dishes. Single static page, no
 3. If soaking helps for that item, a **Soak Time (hours)** field appears, pre-filled with the
    recommended soak (0 if soaking isn't useful for that item). Water and pressure-cook time
    scale linearly from "unsoaked" toward "fully soaked" as you increase the hours, and **cap out**
-   at the recommended soak time — soaking longer than recommended doesn't model any extra
+   at the recommended soak time; soaking longer than recommended doesn't model any extra
    benefit.
 
 Water is always rounded to the nearest 10 mL. The Results card also shows a rough total time
 (pressurising + cook + release) and warns when the liquid is under the ~250 mL an Instant Pot
-needs to reach pressure, or when the batch would pass the half-full line of a 6 qt pot.
+needs to reach pressure (500 mL for an 8 qt pot), or when the batch would pass the half-full line of the
+pot size you pick (3, 6 or 8 qt; 6 qt by default).
 Quinoa, oats, lentils and congee all foam under pressure, so none of them use Quick Release.
 
-Your last category, item, weight and unit choices are remembered in `localStorage`.
+Your last category, item, weight, unit and pot-size choices are remembered in `localStorage`.
 
 ## Ratios & times
 
 | Category | Item | Unsoaked ratio¹ / time | Recommended soak | Soaked ratio¹ / time | Release |
 | --- | --- | --- | --- | --- | --- |
 | Rice | White Basmati | 1.20 / 4 min | 30 min | 1.00 / 1 min | 10 Min NPR unsoaked, 5 Min NPR soaked³ |
-| Rice | Jasmine | 1.10 / 3 min | 30 min (optional) | 1.00 / 2 min | 10 Min NPR |
+| Rice | Jasmine | 1.20 / 3 min | 30 min (optional) | 1.00 / 2 min | 10 Min NPR |
 | Rice | Brown Basmati | 1.25 / 20 min | 2 hrs | 1.10 / 16 min | 10 Min NPR |
 | Rice | Standard Brown | 1.25 / 22 min | 2 hrs | 1.10 / 18 min | 10 Min NPR |
 | Oats | Steel-Cut | 4.0 / 4 min | 8 hrs | 3.0 / 1 min | 10 Min NPR |
@@ -41,7 +42,7 @@ Your last category, item, weight and unit choices are remembered in `localStorag
 | Beans | Black Beans | 3.3 / 22 min | 8 hrs | 2.4 / 10 min | 15 Min NPR |
 | Beans | Pinto Beans | 3.3 / 25 min | 8 hrs | 2.4 / 15 min | 15 Min NPR |
 | Beans | Ful Medames (Fava) | 3.8 / 45 min | 10 hrs | 2.8 / 20 min | 15 Min NPR |
-| Combo | Mujaddara (Lentils+Rice)² | 2.5 / 10 min | 0 (optional 1 hr) | 2.3 / 8 min | 10 Min NPR |
+| Combo | Mujaddara (Lentils+Rice)² | 1.5 / 6 min, after a lentil par-cook | 1 hr (lentils only, just-boiled water) | 1.5 / 6 min | 10 Min NPR |
 
 ¹ Ratio = mL water per gram of dry weight.
 ² Weight entered is the **combined** lentils + rice weight, split 1:1 by weight.

@@ -174,6 +174,10 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="flex items-center justify-center gap-2 flex-wrap">
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Pot size</span>
+                            <div id="pot-size-toggle" class="flex gap-2"></div>
+                        </div>
                         <div id="liquid-warning" class="hidden text-xs font-bold text-amber-800 bg-amber-50 border border-amber-200 rounded-lg p-3 text-center"></div>
                     </div>
                 </div>
@@ -592,11 +596,19 @@
     // Approximate minutes each release method takes, for the total-time estimate.
     const RELEASE_MINUTES = { '10 Min NPR': 10, '15 Min NPR': 15, 'Quick Release': 1, 'Full NPR': 20, '5 Min NPR': 5 };
 
-    // Instant Pot needs roughly a cup of thin liquid to come to pressure (a 6 qt
-    // pot; 8 qt wants more), and foamy grains/pulses must stay under the
-    // half-full line. Both are shown as warnings, never enforced.
-    const MIN_LIQUID_ML = 250;
-    const HALF_FULL_ML = 2800;
+    // Per pot size: the liquid floor to reach pressure, and the half-full line
+    // (half the rated capacity: 2.8 / 5.7 / 7.6 L) that foamy grains and pulses
+    // must stay under. Both are shown as warnings, never enforced. The manual
+    // lists 1½ cups (375 mL) minimum for 6 qt, but Instant Pot's own rice
+    // recipes run 1 cup of water in a 6 qt pot, since a grain batch's water is
+    // all free at the start; 375 would warn on the app's own default screen, so
+    // 3 and 6 qt use the practical 1 cup floor. 8 qt keeps the manual's 2 cups.
+    const POT_SIZES = [
+        { id: '3qt', label: '3 qt', minLiquidMl: 250, halfFullMl: 1400 },
+        { id: '6qt', label: '6 qt', minLiquidMl: 250, halfFullMl: 2850 },
+        { id: '8qt', label: '8 qt', minLiquidMl: 500, halfFullMl: 3800 },
+    ];
+    const DEFAULT_POT_SIZE = '6qt';
 
     const SOAK_STEP = 0.5;
     const MAX_SOAK_HOURS = 24;
@@ -806,6 +818,7 @@
     const methodList = document.getElementById('method-list');
     const waterUnitToggle = document.getElementById('water-unit-toggle');
     const waterUnitLabel = document.getElementById('water-unit-label');
+    const potSizeToggle = document.getElementById('pot-size-toggle');
     const blockWeight = document.getElementById('block-weight');
     const blockSoak = document.getElementById('block-soak');
     const blockResults = document.getElementById('block-results');
@@ -822,6 +835,7 @@
 
     let weightUnit = 'g';
     let waterUnit = 'mL';
+    let potSize = DEFAULT_POT_SIZE;
     let prepWashWeight = 500;
 
     // Remember the last selection and units so reopening the page in the kitchen
@@ -830,7 +844,7 @@
     const saveState = () => {
         try {
             localStorage.setItem(STORAGE_KEY, JSON.stringify({
-                currentCategory, currentItemId, weight, weightUnit, waterUnit,
+                currentCategory, currentItemId, weight, weightUnit, waterUnit, potSize,
             }));
         } catch (e) { /* storage unavailable */ }
     };
@@ -845,6 +859,7 @@
             if (Number.isFinite(saved.weight) && saved.weight > 0) weight = saved.weight;
             if (WEIGHT_UNITS.some((u) => u.id === saved.weightUnit)) weightUnit = saved.weightUnit;
             if (WATER_UNITS.some((u) => u.id === saved.waterUnit)) waterUnit = saved.waterUnit;
+            if (POT_SIZES.some((p) => p.id === saved.potSize)) potSize = saved.potSize;
         } catch (e) { /* ignore corrupt or unavailable storage */ }
     };
     loadState();
@@ -868,6 +883,7 @@
     };
 
     buildUnitToggle(weightUnitToggle, WEIGHT_UNITS, (id) => { weightUnit = id; });
+    buildUnitToggle(potSizeToggle, POT_SIZES, (id) => { potSize = id; });
     buildUnitToggle(waterUnitToggle, WATER_UNITS, (id) => { waterUnit = id; });
 
     prepWashWeightInput.addEventListener('input', (e) => {
@@ -1084,6 +1100,9 @@
         waterUnitToggle.querySelectorAll('button').forEach((btn) => {
             btn.className = unitBtnClass(btn.dataset.unit === waterUnit);
         });
+        potSizeToggle.querySelectorAll('button').forEach((btn) => {
+            btn.className = unitBtnClass(btn.dataset.unit === potSize);
+        });
 
         if (item.soak) {
             soakControls.classList.remove('hidden');
@@ -1140,11 +1159,12 @@
             : `≈ ${estimateTotalMinutes(release, water, time)} min total incl. pressurising & release`;
         document.getElementById('release').textContent = release;
 
-        if (water > 0 && water < MIN_LIQUID_ML) {
-            liquidWarningEl.textContent = `⚠️ ${water} mL is under the ~${MIN_LIQUID_ML} mL an Instant Pot needs to reach pressure. Cook a bigger batch, or use pot-in-pot with 250 mL water in the outer pot.`;
+        const pot = POT_SIZES.find((p) => p.id === potSize);
+        if (water > 0 && water < pot.minLiquidMl) {
+            liquidWarningEl.textContent = `⚠️ ${water} mL is under the ~${pot.minLiquidMl} mL the ${pot.label} pot needs to reach pressure. Cook a bigger batch, or use pot-in-pot with ${pot.minLiquidMl} mL water in the outer pot.`;
             liquidWarningEl.classList.remove('hidden');
-        } else if (water + weight > HALF_FULL_ML) {
-            liquidWarningEl.textContent = '⚠️ This batch is over the half-full line of a 6 qt pot. Foamy grains and pulses expand a lot, so split it into two batches.';
+        } else if (water + weight > pot.halfFullMl) {
+            liquidWarningEl.textContent = `⚠️ This batch is over the half-full line of the ${pot.label} pot (about ${pot.halfFullMl} mL). Foamy grains and pulses expand a lot, so split it into two batches.`;
             liquidWarningEl.classList.remove('hidden');
         } else {
             liquidWarningEl.classList.add('hidden');
