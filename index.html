@@ -200,7 +200,10 @@
     // interpolate ratio/time between unsoaked and `soak`). defaultSoakMinutes
     // = value the soak-hours input starts at for that item; usually equal to
     // soakMinutes, but can be lower when soaking is optional rather than the
-    // traditional/recommended default (see Mujaddara).
+    // recommended default (see Jasmine). soakStep = replaces the generic soak
+    // wording (Mujaddara soaks only the lentils, in just-boiled water).
+    // parCook = {step, minutes}: a head-start step used instead of the soak
+    // whenever soak hours are under the soakMinutes cap; see parCookActive().
     // methodIntro/methodOutro = optional extra steps prepended/appended to the
     // generic pressure-cooking method (e.g. caramelizing onions for Mujaddara).
     // Either can be a single string or an array of strings when more than one
@@ -374,10 +377,15 @@
                 'mujaddara': {
                     label: 'Mujaddara (Lentils+Rice)', icon: '🍛', ingredientLabel: 'lentils and rice',
                     rinseStep: 'Rinse the lentils and the rice separately under cold water; pick over the lentils for stones.',
-                    ratio: 2.5, time: 10, release: '10 Min NPR', gramsPerCup: 190,
-                    soakMinutes: 60, defaultSoakMinutes: 0,
-                    soak: { ratio: 2.3, time: 8 },
-                    note: 'Weight = combined brown/green lentils + white basmati, split 1:1 by weight. Traditional recipe skips soaking; pre-soaking the lentils ~1 hr trims a couple of minutes if you want to.',
+                    ratio: 1.5, time: 6, release: '10 Min NPR', gramsPerCup: 190,
+                    soakMinutes: 60, defaultSoakMinutes: 60,
+                    soak: { ratio: 1.5, time: 6 },
+                    note: 'Weight = combined brown/green lentils + white basmati, split 1:1 by weight. The lentils need a head start so they finish with the rice: soak them 1 hr in just-boiled water (the default), or set the soak to 0 and the Method adds a quick par-cook instead. Either way the water is only ~1.5 mL/g, far less than plain lentils, which keeps the rice from going mushy.',
+                    soakStep: 'Soak just the lentils (not the rice) in just-boiled water for about 1 hr, or in cold water overnight, then drain and discard the soaking water.',
+                    parCook: {
+                        step: 'Par-cook the lentils (skip this after a full 1 hr soak): cover them with water by about 2cm in the pot, cook 1 min on High Pressure, let the pressure release naturally for 10 min, then drain.',
+                        minutes: 20,
+                    },
                     methodIntro: ['Thinly slice 1 large onion per 200g dry mix and fry in oil (on Sauté or in a pan) until deep golden brown; set aside for garnish. If using Sauté, deglaze the pot with a splash of water so nothing is stuck to the base.'],
                     methodOutro: 'Fluff, top with the caramelized onions, and serve warm.',
                 },
@@ -618,6 +626,11 @@
         return pressurise + time + (RELEASE_MINUTES[release] || 10);
     };
 
+    // parCook = {step, minutes}: a head-start cook (Mujaddara's lentils) that
+    // stands in for the soak, so it applies whenever the soak is short of the
+    // item's soakMinutes cap, not only at 0.
+    const parCookActive = (item, hours) => !!item.parCook && hours < item.soakMinutes / 60;
+
     const formatDuration = (hours) => {
         const mins = Math.round(hours * 60);
         if (mins < 60) return `${mins} min`;
@@ -719,11 +732,15 @@
             const capHours = item.soakMinutes / 60;
             const soaked = Math.min(hours, capHours);
             const longer = hours > capHours ? ` (anything past ${formatDuration(capHours)} adds nothing, so ${formatDuration(hours)} is fine but not needed)` : '';
-            steps.push(`Soak in plenty of cold water for ${formatDuration(soaked)}${longer}, then drain and discard the soaking water.`);
+            // soakStep replaces the generic wording outright (and its "past the
+            // cap adds nothing" aside), since it already names its own durations.
+            steps.push(item.soakStep
+                || `Soak in plenty of cold water for ${formatDuration(soaked)}${longer}, then drain and discard the soaking water.`);
         }
         if (item.toxinBoil) {
             steps.push('Cover with fresh water and boil hard, uncovered, for 10 minutes (on Sauté or the stove) to destroy natural toxins, then drain.');
         }
+        if (parCookActive(item, hours)) steps.push(item.parCook.step);
         if (item.methodPreCook) steps.push(...asSteps(item.methodPreCook));
         const liquidWord = liquid ? liquid.label.toLowerCase() : 'water';
         const waterText = unit === 'mL'
@@ -1108,7 +1125,9 @@
         waterLabelEl.textContent = liquid ? `Add ${liquid.label}` : 'Add Water';
         const release = activeRelease(item, soakHours);
         document.getElementById('time').textContent = time;
-        totalTimeEl.textContent = `≈ ${estimateTotalMinutes(release, water, time)} min total incl. pressurising & release`;
+        totalTimeEl.textContent = parCookActive(item, soakHours)
+            ? `≈ ${estimateTotalMinutes(release, water, time) + item.parCook.minutes} min total incl. par-cook, pressurising & release`
+            : `≈ ${estimateTotalMinutes(release, water, time)} min total incl. pressurising & release`;
         document.getElementById('release').textContent = release;
 
         if (water > 0 && water < MIN_LIQUID_ML) {

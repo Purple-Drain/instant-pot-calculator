@@ -28,7 +28,7 @@ optionally adjust soak time, get water/pressure-time/release-method plus a gener
   `label`, `icon`, `ratio` (mL water per gram dry, unsoaked), `time` (High-Pressure minutes,
   unsoaked), `release`, `soakMinutes` (point where soak benefit caps), `defaultSoakMinutes`
   (what the soak input starts at — usually equals `soakMinutes`, but can be lower when soaking
-  is optional, e.g. Mujaddara defaults to 0), `soak: {ratio, time} | null`, `note`, optional
+  is optional, e.g. Jasmine defaults to 0), `soak: {ratio, time} | null`, `note`, optional
   `warning` (persistent safety banner text, e.g. kidney beans' toxin warning or congee's foaming
   warning), optional `toxinBoil` (drives the "boil hard to neutralize toxins" Method step —
   deliberately separate from `warning`, since `warning` now also covers non-toxin safety notes
@@ -73,6 +73,14 @@ optionally adjust soak time, get water/pressure-time/release-method plus a gener
   the Instant Pot", for prep that happens after soaking/rinsing but before the pot goes on (White
   Basmati's anti-clump oil-coating step is the first user). Same shape as `methodIntro`/
   `methodOutro`, different insertion point.
+- `item.soakStep` (optional string) replaces the generic "soak in cold water" Method step, and
+  `item.parCook = {step, minutes}` adds a head-start step (inserted before `methodPreCook`) plus
+  its minutes in the total-time estimate whenever soak hours are under the `soakMinutes` cap, via
+  `parCookActive()`. Mujaddara is the only user: its lentils need a 1 hr just-boiled soak or a
+  1 min par-cook so they finish in the same 6 min as the rice. Values were source-checked in #26
+  (1.42 to 1.58 mL/g combined dry weight across six recipes); the old 2.5 mL/g, no-soak default
+  made the rice mushy. The par-cook covers a partial soak too, not only 0 h, since a short soak
+  alone leaves the lentils underdone at 6 min.
 - `methodIntro`/`methodOutro` accept a single string or an array of strings; `generateMethodSteps`
   spreads either form the same way. White Basmati's `methodOutro` is the first array use, since
   the actual anti-clump fix (identified after #22 shipped) needed two separate steps: fluff
