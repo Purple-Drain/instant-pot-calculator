@@ -189,6 +189,9 @@
                     <span class="chevron">▾</span>
                 </button>
                 <div id="section-method" class="section-body">
+                    <div class="flex justify-center mb-2">
+                        <button id="plain-toggle" type="button" aria-pressed="false" title="Drops oil, salt, stock, onion, garlic and other seasoning steps; water, time and release are unchanged"></button>
+                    </div>
                     <ol id="method-list" class="list-decimal list-inside space-y-1.5 text-sm text-slate-700 bg-slate-50 border border-slate-200 rounded-xl p-4"></ol>
                     <div class="text-center mt-2">
                         <button id="copy-method" type="button" class="text-xs font-bold text-blue-600 hover:text-blue-800 underline underline-offset-2">📋 Copy method</button>
@@ -236,7 +239,7 @@
                     soakMinutes: 30, defaultSoakMinutes: 30,
                     soak: { ratio: 1.0, time: 1, release: '5 Min NPR' },
                     note: '💧 Soaked 30 min: cuts water & 3 min off cook time, and switches release to 5 Min NPR (down from 10) so the pre-softened grains spend less time under residual steam',
-                    methodPreCook: ['Toss the drained rice with ½ tsp oil or ghee; a light coating keeps surface starch from gluing grains together as they cook.'],
+                    methodPreCook: [{ text: 'Toss the drained rice with ½ tsp oil or ghee; a light coating keeps surface starch from gluing grains together as they cook.', plain: false }],
                     methodOutro: [
                         'Fluff immediately with a fork, lifting from the base rather than stirring.',
                         'Leave it uncovered, or loosely covered with a tea towel, for a minute or two so the steam escapes, then serve. Sealing the lid back down while it is still steaming is what usually reglues the grains, more than release timing or anything else.',
@@ -269,7 +272,7 @@
         },
         oats: {
             label: 'Oats', icon: '🌾',
-            defaultOutro: 'Stir well (it thickens as it stands), then add milk, sweetener, or fruit to taste.',
+            defaultOutro: { text: 'Stir well (it thickens as it stands), then add milk, sweetener, or fruit to taste.', plain: 'Stir well (it thickens as it stands) and serve.' },
             items: {
                 'steel-cut': {
                     label: 'Steel-Cut', icon: '🌾', ingredientLabel: 'steel-cut oats',
@@ -305,7 +308,7 @@
         lentils: {
             label: 'Lentils', icon: '🟤',
             rinseStep: 'Pick over the lentils for stones and debris, then rinse under cold water.',
-            defaultOutro: 'Season with salt and serve.',
+            defaultOutro: { text: 'Season with salt and serve.', plain: 'Stir gently and serve as is.' },
             items: {
                 'red': {
                     label: 'Red (Split)', icon: '🔴', ingredientLabel: 'red lentils',
@@ -313,7 +316,7 @@
                     soakMinutes: 0, defaultSoakMinutes: 0,
                     soak: null,
                     note: 'No soak needed; split red lentils cook fast and break down into a soft dal either way. They foam, so let the pressure drop naturally.',
-                    methodOutro: 'Stir well (it thickens as it stands), season with salt, and serve.',
+                    methodOutro: { text: 'Stir well (it thickens as it stands), season with salt, and serve.', plain: 'Stir well (it thickens as it stands) and serve.' },
                 },
                 'brown-green': {
                     label: 'Brown/Green', icon: '🟤', ingredientLabel: 'lentils',
@@ -327,7 +330,10 @@
         beans: {
             label: 'Beans', icon: '🫘',
             rinseStep: 'Pick over the beans for stones and shrivelled ones, then rinse under cold water.',
-            defaultOutro: 'Check a bean is tender (if not, cook 5 min more on High Pressure), then season with salt, drain any excess liquid, and serve.',
+            defaultOutro: {
+                text: 'Check a bean is tender (if not, cook 5 min more on High Pressure), then season with salt, drain any excess liquid, and serve.',
+                plain: 'Check a bean is tender (if not, cook 5 min more on High Pressure), then drain any excess liquid and serve.',
+            },
             items: {
                 'chickpeas': {
                     label: 'Chickpeas', icon: '🟡',
@@ -374,7 +380,7 @@
                     soakMinutes: 600, defaultSoakMinutes: 600,
                     soak: { ratio: 2.8, time: 20 },
                     note: '💧 Use whole, skin-on dried fava (not split). Soaking 8–12 hrs (recommended 10) is essential and roughly halves cook time',
-                    methodOutro: 'Lightly mash, then drizzle with olive oil, lemon juice, and a pinch of cumin before serving.',
+                    methodOutro: { text: 'Lightly mash, then drizzle with olive oil, lemon juice, and a pinch of cumin before serving.', plain: 'Lightly mash and serve.' },
                 },
             },
         },
@@ -398,8 +404,8 @@
                         step: 'Par-cook the lentils (skip this after a full 1 hr soak): cover them with water by about 2cm in the pot, cook 1 min on High Pressure, let the pressure release naturally for 10 min, then drain.',
                         minutes: 20,
                     },
-                    methodIntro: ['Thinly slice 1 large onion per 200g dry mix and fry in oil (on Sauté or in a pan) until deep golden brown; set aside for garnish. If using Sauté, deglaze the pot with a splash of water so nothing is stuck to the base.'],
-                    methodOutro: 'Fluff, top with the caramelized onions, and serve warm.',
+                    methodIntro: [{ text: 'Thinly slice 1 large onion per 200g dry mix and fry in oil (on Sauté or in a pan) until deep golden brown; set aside for garnish. If using Sauté, deglaze the pot with a splash of water so nothing is stuck to the base.', plain: false }],
+                    methodOutro: { text: 'Fluff, top with the caramelized onions, and serve warm.', plain: 'Fluff with a fork and serve warm.' },
                 },
             },
         },
@@ -414,7 +420,10 @@
                     soak: null,
                     note: 'Congee uses ~6–8x water to rice by volume (vs ~1:1 for steamed rice). No soak needed; the long cook and natural release break the grains down into porridge on their own.',
                     warning: '⚠️ Congee foams and expands a lot. Never fill the pot past the half-full line, and always let the pressure release fully and naturally (no quick release) to avoid clogging the valve with starchy foam.',
-                    methodOutro: 'Stir well; it thickens as it stands, so thin with hot water to taste. Season with salt and top with spring onion, ginger, sesame oil, or a soft egg.',
+                    methodOutro: {
+                        text: 'Stir well; it thickens as it stands, so thin with hot water to taste. Season with salt and top with spring onion, ginger, sesame oil, or a soft egg.',
+                        plain: 'Stir well; it thickens as it stands, so thin with hot water to taste.',
+                    },
                 },
                 'beef-mince': {
                     label: 'Beef Mince Congee', icon: '🥩', ingredientLabel: 'Rice',
@@ -423,11 +432,19 @@
                     soak: null,
                     note: 'Weight = dry rice only. The beef mince and aromatics are browned and stirred in separately, see Method below.',
                     warning: '⚠️ Congee foams and expands a lot. Never fill the pot past the half-full line, and always let the pressure release fully and naturally (no quick release) to avoid clogging the valve with starchy foam.',
+                    // The beef is browned, then lifted out before the rice goes in: it is
+                    // stirred back through after cooking and never pressure cooked (#16).
                     methodIntro: [
-                        'Mince 3 cloves garlic, grate 2cm fresh ginger, and finely slice the white parts of 2 spring onions (keep the green parts for garnish).',
-                        'On Sauté, brown the beef mince (about 1.5x the dry rice weight, e.g. 300g mince for 200g rice) in a little oil, breaking it up, until no longer pink; stir in the garlic, ginger, and spring onion whites for 1 min, then turn off Sauté and deglaze with a splash of the cooking liquid so nothing is stuck to the base.',
+                        { text: 'Mince 3 cloves garlic, grate 2cm fresh ginger, and finely slice the white parts of 2 spring onions (keep the green parts for garnish).', plain: false },
+                        {
+                            text: 'On Sauté, brown the beef mince (about 1.5x the dry rice weight, e.g. 300g mince for 200g rice) in a little oil, breaking it up, until no longer pink; stir in the garlic, ginger, and spring onion whites for 1 min. Tip the mixture into a bowl and set it aside (it goes back in after cooking, not under pressure), then turn off Sauté and deglaze with a splash of the cooking liquid so nothing is stuck to the base.',
+                            plain: 'On Sauté, dry-brown the beef mince (about 1.5x the dry rice weight, e.g. 300g mince for 200g rice) with nothing added, breaking it up, until no longer pink. Tip it into a bowl, pour off the fat, and set it aside (it goes back in after cooking, not under pressure), then turn off Sauté and deglaze with a splash of water so nothing is stuck to the base.',
+                        },
                     ],
-                    methodOutro: 'Stir the beef mince mixture back through the congee, then top with the reserved spring onion greens, a drizzle of sesame oil, and white pepper to taste.',
+                    methodOutro: {
+                        text: 'Stir the beef mince mixture back through the congee, then top with the reserved spring onion greens, a drizzle of sesame oil, and white pepper to taste.',
+                        plain: 'Stir the beef mince back through the congee and serve.',
+                    },
                     liquidOptions: {
                         choices: [
                             { id: 'water', label: 'Water' },
@@ -740,10 +757,15 @@
     // methodIntro/methodOutro/methodPreCook may be a string or an array of strings.
     const asSteps = (v) => (Array.isArray(v) ? v : [v]);
 
-    const generateMethodSteps = (item, category, water, time, hours, liquid, unit) => {
+    const generateMethodSteps = (item, category, water, time, hours, liquid, unit, plain = false) => {
         const steps = [];
         const ingredientLabel = (item.ingredientLabel || item.label).toLowerCase();
-        if (item.methodIntro) steps.push(...asSteps(item.methodIntro));
+        // Plain mode: a method entry may be {text, plain}; plain === false drops the
+        // step, a string replaces it. Bare strings print in both modes.
+        const pick = (v) => asSteps(v)
+            .map((e) => (typeof e === 'string' ? e : (plain ? e.plain : e.text)))
+            .filter(Boolean);
+        if (item.methodIntro) steps.push(...pick(item.methodIntro));
         if (!item.skipRinse) {
             steps.push(item.rinseStep || category.rinseStep
                 || `Rinse the dry ${ingredientLabel} under cold water until it runs clear.`);
@@ -763,7 +785,7 @@
             steps.push('Cover with fresh water and boil hard, uncovered, for 10 minutes (on Sauté or the stove) to destroy natural toxins, then drain.');
         }
         if (parCookActive(item, hours)) steps.push(item.parCook.step);
-        if (item.methodPreCook) steps.push(...asSteps(item.methodPreCook));
+        if (item.methodPreCook) steps.push(...pick(item.methodPreCook));
         const liquidWord = liquid ? liquid.label.toLowerCase() : 'water';
         const waterText = unit === 'mL'
             ? `${water} mL`
@@ -773,7 +795,7 @@
         steps.push(`Cook on High Pressure for ${time} min.`);
         const release = activeRelease(item, hours);
         steps.push(RELEASE_INSTRUCTIONS[release] || `Release: ${release}.`);
-        steps.push(...asSteps(item.methodOutro || category.defaultOutro || 'Fluff with a fork and serve.'));
+        steps.push(...pick(item.methodOutro || category.defaultOutro || 'Fluff with a fork and serve.'));
         return steps;
     };
 
@@ -819,6 +841,7 @@
     const waterUnitToggle = document.getElementById('water-unit-toggle');
     const waterUnitLabel = document.getElementById('water-unit-label');
     const potSizeToggle = document.getElementById('pot-size-toggle');
+    const plainToggle = document.getElementById('plain-toggle');
     const blockWeight = document.getElementById('block-weight');
     const blockSoak = document.getElementById('block-soak');
     const blockResults = document.getElementById('block-results');
@@ -836,6 +859,7 @@
     let weightUnit = 'g';
     let waterUnit = 'mL';
     let potSize = DEFAULT_POT_SIZE;
+    let plainMode = false;
     let prepWashWeight = 500;
 
     // Remember the last selection and units so reopening the page in the kitchen
@@ -844,7 +868,7 @@
     const saveState = () => {
         try {
             localStorage.setItem(STORAGE_KEY, JSON.stringify({
-                currentCategory, currentItemId, weight, weightUnit, waterUnit, potSize,
+                currentCategory, currentItemId, weight, weightUnit, waterUnit, potSize, plainMode,
             }));
         } catch (e) { /* storage unavailable */ }
     };
@@ -860,6 +884,7 @@
             if (WEIGHT_UNITS.some((u) => u.id === saved.weightUnit)) weightUnit = saved.weightUnit;
             if (WATER_UNITS.some((u) => u.id === saved.waterUnit)) waterUnit = saved.waterUnit;
             if (POT_SIZES.some((p) => p.id === saved.potSize)) potSize = saved.potSize;
+            plainMode = saved.plainMode === true;
         } catch (e) { /* ignore corrupt or unavailable storage */ }
     };
     loadState();
@@ -884,6 +909,7 @@
 
     buildUnitToggle(weightUnitToggle, WEIGHT_UNITS, (id) => { weightUnit = id; });
     buildUnitToggle(potSizeToggle, POT_SIZES, (id) => { potSize = id; });
+    plainToggle.addEventListener('click', () => { plainMode = !plainMode; render(); });
     buildUnitToggle(waterUnitToggle, WATER_UNITS, (id) => { waterUnit = id; });
 
     prepWashWeightInput.addEventListener('input', (e) => {
@@ -1129,8 +1155,12 @@
             warningEl.classList.add('hidden');
         }
 
-        const liquid = selectedLiquidChoice(item, selectedLiquidId);
-        if (item.liquidOptions) {
+        // Plain mode cooks in water only, so the stock choice is hidden.
+        const liquid = plainMode ? null : selectedLiquidChoice(item, selectedLiquidId);
+        plainToggle.setAttribute('aria-pressed', String(plainMode));
+        plainToggle.textContent = plainMode ? '✓ Plain: no oil, salt or seasoning' : 'Plain: no oil, salt or seasoning';
+        plainToggle.className = unitBtnClass(plainMode);
+        if (item.liquidOptions && !plainMode) {
             liquidSelect.classList.remove('hidden');
             liquidToggle.innerHTML = '';
             item.liquidOptions.choices.forEach((choice) => {
@@ -1172,7 +1202,7 @@
         document.getElementById('ratio').textContent = `Ratio 1 : ${activeRatio(item, soakHours).toFixed(2)} (dry : water)`;
 
         methodList.innerHTML = '';
-        generateMethodSteps(item, categories[currentCategory], water, time, soakHours, liquid, waterUnit).forEach((step) => {
+        generateMethodSteps(item, categories[currentCategory], water, time, soakHours, liquid, waterUnit, plainMode).forEach((step) => {
             const li = document.createElement('li');
             li.textContent = step;
             methodList.appendChild(li);
