@@ -2,6 +2,21 @@
 
 Newest first. Each entry says what shipped, what is open, and what to check first.
 
+## 12.09.26 (afternoon): Mujaddara fix, open items specced
+
+### Shipped
+- #20: thread-title convention plus the `title` and `title-fix` skills, after review fixes (no em dashes, pipe-separated examples). #19 is done.
+- #27: Mujaddara now uses 1.5 mL/g and 6 min with a 10 min natural release. The soak defaults to 1 hr of just the lentils in just-boiled water (`soakStep`). Any soak under 1 hr adds a 1 min par-cook step and 20 min to the total time (`parCook`, `parCookActive()`). Verified headless at soak 0, 0.5, 1 and 8 h.
+- This PR: em dashes removed from the older CLAUDE.md text. The en dashes in `index.html` are number ranges ("20–30 min"), which the writing rule allows, so they stay.
+
+### Still open
+- Jasmine ratio: owner decision. Keep 1.1 mL/g, or raise towards the sources' ~1.28 (see #26). Leave `soak.ratio` alone either way, since no source covers soaked jasmine.
+- #28 pot size, #29 plain mode and #30 visual check: each is written up as a well-defined issue ready to pick up.
+- #16: congee grain sub-choice and volume cap.
+
+### Check first
+- A partial Mujaddara soak (e.g. 30 min) prints both the soak step and the par-cook step. That is deliberate: a short soak alone leaves the lentils underdone at 6 min.
+
 ## 12.09.26: recipe review follow-ups
 
 ### Shipped
