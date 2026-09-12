@@ -704,10 +704,13 @@
         return unit === 'floz' ? v.toFixed(1) : v.toFixed(2);
     };
 
+    // methodIntro/methodOutro/methodPreCook may be a string or an array of strings.
+    const asSteps = (v) => (Array.isArray(v) ? v : [v]);
+
     const generateMethodSteps = (item, category, water, time, hours, liquid, unit) => {
         const steps = [];
         const ingredientLabel = (item.ingredientLabel || item.label).toLowerCase();
-        if (item.methodIntro) steps.push(...item.methodIntro);
+        if (item.methodIntro) steps.push(...asSteps(item.methodIntro));
         if (!item.skipRinse) {
             steps.push(item.rinseStep || category.rinseStep
                 || `Rinse the dry ${ingredientLabel} under cold water until it runs clear.`);
@@ -721,7 +724,7 @@
         if (item.toxinBoil) {
             steps.push('Cover with fresh water and boil hard, uncovered, for 10 minutes (on Sauté or the stove) to destroy natural toxins, then drain.');
         }
-        if (item.methodPreCook) steps.push(...item.methodPreCook);
+        if (item.methodPreCook) steps.push(...asSteps(item.methodPreCook));
         const liquidWord = liquid ? liquid.label.toLowerCase() : 'water';
         const waterText = unit === 'mL'
             ? `${water} mL`
@@ -731,8 +734,7 @@
         steps.push(`Cook on High Pressure for ${time} min.`);
         const release = activeRelease(item, hours);
         steps.push(RELEASE_INSTRUCTIONS[release] || `Release: ${release}.`);
-        const outro = item.methodOutro || category.defaultOutro || 'Fluff with a fork and serve.';
-        steps.push(...(Array.isArray(outro) ? outro : [outro]));
+        steps.push(...asSteps(item.methodOutro || category.defaultOutro || 'Fluff with a fork and serve.'));
         return steps;
     };
 
