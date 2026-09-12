@@ -73,14 +73,17 @@ optionally adjust soak time, get water/pressure-time/release-method plus a gener
   the Instant Pot", for prep that happens after soaking/rinsing but before the pot goes on (White
   Basmati's anti-clump oil-coating step is the first user). Same shape as `methodIntro`/
   `methodOutro`, different insertion point.
-- `item.soakStep` (optional string) replaces the generic "soak in cold water" Method step, and
+- `item.soakStep` (optional string, or a function of the soaked hours capped at `soakMinutes`)
+  replaces the generic "soak in cold water" Method step; the function form lets a partial soak
+  print the duration the user actually entered instead of the full recommendation. And
   `item.parCook = {step, minutes}` adds a head-start step (inserted before `methodPreCook`) plus
   its minutes in the total-time estimate whenever soak hours are under the `soakMinutes` cap, via
   `parCookActive()`. Mujaddara is the only user: its lentils need a 1 hr just-boiled soak or a
   1 min par-cook so they finish in the same 6 min as the rice. Values were source-checked in #26
   (1.42 to 1.58 mL/g combined dry weight across six recipes); the old 2.5 mL/g, no-soak default
   made the rice mushy. The par-cook covers a partial soak too, not only 0 h, since a short soak
-  alone leaves the lentils underdone at 6 min.
+  alone leaves the lentils underdone at 6 min. Mujaddara's `soak` values deliberately equal its
+  unsoaked `ratio`/`time`: the par-cook stands in for the soak, so the main cook never changes.
 - `methodIntro`/`methodOutro` accept a single string or an array of strings; `generateMethodSteps`
   spreads either form the same way. White Basmati's `methodOutro` is the first array use, since
   the actual anti-clump fix (identified after #22 shipped) needed two separate steps: fluff

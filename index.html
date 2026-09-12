@@ -201,7 +201,8 @@
     // = value the soak-hours input starts at for that item; usually equal to
     // soakMinutes, but can be lower when soaking is optional rather than the
     // recommended default (see Jasmine). soakStep = replaces the generic soak
-    // wording (Mujaddara soaks only the lentils, in just-boiled water).
+    // wording (Mujaddara soaks only the lentils, in just-boiled water); a string,
+    // or a function of the soaked hours (capped at soakMinutes) returning one.
     // parCook = {step, minutes}: a head-start step used instead of the soak
     // whenever soak hours are under the soakMinutes cap; see parCookActive().
     // methodIntro/methodOutro = optional extra steps prepended/appended to the
@@ -379,9 +380,14 @@
                     rinseStep: 'Rinse the lentils and the rice separately under cold water; pick over the lentils for stones.',
                     ratio: 1.5, time: 6, release: '10 Min NPR', gramsPerCup: 190,
                     soakMinutes: 60, defaultSoakMinutes: 60,
+                    // Soaked values equal the unsoaked ones on purpose: parCook stands in
+                    // for the soak, so the main cook is the same either way and the soak
+                    // interpolation is a no-op here. Not a copy-paste slip.
                     soak: { ratio: 1.5, time: 6 },
                     note: 'Weight = combined brown/green lentils + white basmati, split 1:1 by weight. The lentils need a head start so they finish with the rice: soak them 1 hr in just-boiled water (the default), or set the soak to 0 and the Method adds a quick par-cook instead. Either way the water is only ~1.5 mL/g, far less than plain lentils, which keeps the rice from going mushy.',
-                    soakStep: 'Soak just the lentils (not the rice) in just-boiled water for about 1 hr, or in cold water overnight, then drain and discard the soaking water.',
+                    soakStep: (soaked) => (soaked >= 1
+                        ? 'Soak just the lentils (not the rice) in just-boiled water for about 1 hr, or in cold water overnight, then drain and discard the soaking water.'
+                        : `Soak just the lentils (not the rice) in just-boiled water for ${formatDuration(soaked)}, then drain and discard the soaking water. That is short of the full 1 hr, so do the par-cook step below as well.`),
                     parCook: {
                         step: 'Par-cook the lentils (skip this after a full 1 hr soak): cover them with water by about 2cm in the pot, cook 1 min on High Pressure, let the pressure release naturally for 10 min, then drain.',
                         minutes: 20,
@@ -733,8 +739,10 @@
             const soaked = Math.min(hours, capHours);
             const longer = hours > capHours ? ` (anything past ${formatDuration(capHours)} adds nothing, so ${formatDuration(hours)} is fine but not needed)` : '';
             // soakStep replaces the generic wording outright (and its "past the
-            // cap adds nothing" aside), since it already names its own durations.
-            steps.push(item.soakStep
+            // cap adds nothing" aside); a function form gets the capped soak hours
+            // so its text can match what the user entered.
+            const soakStep = typeof item.soakStep === 'function' ? item.soakStep(soaked) : item.soakStep;
+            steps.push(soakStep
                 || `Soak in plenty of cold water for ${formatDuration(soaked)}${longer}, then drain and discard the soaking water.`);
         }
         if (item.toxinBoil) {
