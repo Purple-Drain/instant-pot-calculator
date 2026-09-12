@@ -135,7 +135,9 @@ optionally adjust soak time, get water/pressure-time/release-method plus a gener
   The brown-rice congee rows (#16) carry congee-specific rules that differ from the steamed-rice
   rows on purpose: brown basmati congee is never soaked (it disintegrates) and cooks 30 min from
   dry; brown rice congee soaks overnight, 45 -> 30 min. Don't "harmonise" them with the Rice
-  category. Beef Mince Congee browns the beef on the stove and stirs it in after cooking, never
+  category. The source is a Gemini chat export in the private recipes repo, not kitchen-tested;
+  45 min unsoaked sits above the published 22 to 35 min range and is kept deliberately to match
+  the recipe site (decided 12.09.26 on #16). Beef Mince Congee browns the beef on the stove and stirs it in after cooking, never
   under pressure. #16's own 5.7 L cap (2.5 L liquid + 315 g grains) is covered by the 6 qt
   half-full warning from `POT_SIZES`, which stays advisory like every other warning.
 

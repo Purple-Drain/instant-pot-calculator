@@ -425,9 +425,12 @@
                         plain: 'Stir well; it thickens as it stands, so thin with hot water to taste.',
                     },
                 },
-                // Brown-rice congee values come from the tested congee suite recorded in
-                // #16: brown basmati is never soaked for congee (it disintegrates) and
-                // cooks 30 min from dry; standard brown rice soaks overnight, 45 -> 30 min.
+                // Brown-rice congee values come from the congee suite in the private
+                // recipes repo (a Gemini chat export, not kitchen-tested; see #16): brown
+                // basmati is never soaked for congee (it disintegrates) and cooks 30 min
+                // from dry; standard brown rice soaks overnight, 45 -> 30 min. Published
+                // unsoaked recipes use 22 to 35 min; 45 is kept on purpose to match the
+                // recipe site the user cooks from.
                 'brown-basmati': {
                     label: 'Brown Basmati Congee', icon: '🌾', ingredientLabel: 'brown basmati rice',
                     ratio: 8.0, time: 30, release: 'Full NPR', gramsPerCup: 190,
