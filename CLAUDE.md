@@ -69,7 +69,7 @@ optionally adjust soak time, get water/pressure-time/release-method plus a gener
   switch (not interpolated with `soakFraction()` like ratio/time), since release methods aren't a
   continuum. `estimateTotalMinutes()` and the generated Method's release step both resolve through
   this, not `item.release` directly.
-- `item.methodPreCook` (optional, array): extra Method steps inserted right before "Add the ___ to
+- `item.methodPreCook` (optional, string or array): extra Method steps inserted right before "Add the ___ to
   the Instant Pot", for prep that happens after soaking/rinsing but before the pot goes on (White
   Basmati's anti-clump oil-coating step is the first user). Same shape as `methodIntro`/
   `methodOutro`, different insertion point.
