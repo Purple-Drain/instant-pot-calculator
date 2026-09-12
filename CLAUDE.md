@@ -73,6 +73,12 @@ optionally adjust soak time, get water/pressure-time/release-method plus a gener
   the Instant Pot", for prep that happens after soaking/rinsing but before the pot goes on (White
   Basmati's anti-clump oil-coating step is the first user). Same shape as `methodIntro`/
   `methodOutro`, different insertion point.
+- `methodIntro`/`methodOutro` accept a single string or an array of strings; `generateMethodSteps`
+  spreads either form the same way. White Basmati's `methodOutro` is the first array use, since
+  the actual anti-clump fix (identified after #22 shipped) needed two separate steps: fluff
+  properly, then leave it uncovered a minute rather than sealing the lid back down while it's
+  still steaming, which traps condensation that drips back and reglues the grains more than
+  release timing does.
 - Unit conversion happens only at the display/input boundary: `weight` (grams) and `water` (mL)
   stay canonical everywhere else. `weightUnit`/`waterUnit` state plus `gramsToDisplay`/
   `displayToGrams`/`mlToDisplay`/`formatWeight`/`formatWater` convert on the way in/out. Cup
