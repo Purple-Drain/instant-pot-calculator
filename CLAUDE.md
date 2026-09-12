@@ -58,8 +58,11 @@ optionally adjust soak time, get water/pressure-time/release-method plus a gener
   only right for grains). `generateMethodSteps` takes the category and the current water unit so
   the "Add ___ with N mL" step matches the Results display.
 - Results card extras: `estimateTotalMinutes()` (pressurise + cook + `RELEASE_MINUTES`) and a
-  liquid warning when water is under `MIN_LIQUID_ML` (250) or water + dry weight passes
-  `HALF_FULL_ML` (2800). Advisory only; nothing is clamped. Soak hours are clamped to
+  liquid warning when water is under the selected pot's `minLiquidMl` or water + dry weight
+  passes its `halfFullMl`, both from `POT_SIZES` (3/6/8 qt toggle in the Results card, state
+  `potSize`, persisted with the units; default 6 qt). 3 and 6 qt use a 250 mL floor rather than
+  the manual's 375 mL for 6 qt, since Instant Pot's own rice recipes use 1 cup of water and 375
+  would warn on the default screen; see the comment above `POT_SIZES`. Advisory only; nothing is clamped. Soak hours are clamped to
   0..`MAX_SOAK_HOURS` on input and a note appears when they exceed the item's `soakMinutes` cap.
 - No ratio item uses `'Quick Release'` any more: quinoa, oats, lentils and congee all foam.
 - `activeRelease(item, hours)`: release can also depend on soak state, not just ratio/time.
