@@ -3,7 +3,8 @@
   "private": true,
   "description": "Dev-only checks for index.html. Not part of the deployed page.",
   "scripts": {
-    "visual": "node visual-check.js"
+    "visual": "node visual-check.js",
+    "method": "node method-check.js --pot --plain --muj"
   },
   "devDependencies": {
     "playwright": "^1.55.0"
