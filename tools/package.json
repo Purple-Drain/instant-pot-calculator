@@ -1,0 +1,11 @@
+{
+  "name": "instant-pot-calculator-tools",
+  "private": true,
+  "description": "Dev-only checks for index.html. Not part of the deployed page.",
+  "scripts": {
+    "visual": "node visual-check.js"
+  },
+  "devDependencies": {
+    "playwright": "^1.55.0"
+  }
+}
