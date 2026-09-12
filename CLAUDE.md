@@ -93,6 +93,15 @@ optionally adjust soak time, get water/pressure-time/release-method plus a gener
   properly, then leave it uncovered a minute rather than sealing the lid back down while it's
   still steaming, which traps condensation that drips back and reglues the grains more than
   release timing does.
+- Plain mode (#29): a "Plain" toggle at the top of the Method section, state `plainMode`,
+  persisted with the units. Any `methodIntro`/`methodPreCook`/`methodOutro`/category
+  `defaultOutro` entry may be `{text, plain}` instead of a string: `plain: false` drops the step,
+  a string replaces it, and bare strings print in both modes (`pick()` inside
+  `generateMethodSteps`). Plain mode also forces water (the `liquidOptions` selector hides and the
+  liquid resolves to `null`). Ratios, times and releases never change. Beef Mince Congee keeps a
+  real plain form (dry-browned mince, fat poured off, no aromatics) rather than being hidden,
+  since plain rice with mince is a standard bland meal. When adding a step that mentions oil,
+  salt, stock, onion, garlic or other seasoning, give it a `plain` value.
 - Unit conversion happens only at the display/input boundary: `weight` (grams) and `water` (mL)
   stay canonical everywhere else. `weightUnit`/`waterUnit` state plus `gramsToDisplay`/
   `displayToGrams`/`mlToDisplay`/`formatWeight`/`formatWater` convert on the way in/out. Cup

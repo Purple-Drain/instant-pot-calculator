@@ -21,7 +21,10 @@ needs to reach pressure (500 mL for an 8 qt pot), or when the batch would pass t
 pot size you pick (3, 6 or 8 qt; 6 qt by default).
 Quinoa, oats, lentils and congee all foam under pressure, so none of them use Quick Release.
 
-Your last category, item, weight, unit and pot-size choices are remembered in `localStorage`.
+A **Plain** toggle at the top of the Method drops oil, salt, stock, onion, garlic and other
+seasoning steps and cooks in water only, for bland batches; water, time and release stay the same.
+
+Your last category, item, weight, unit, pot-size and plain-mode choices are remembered in `localStorage`.
 
 ## Ratios & times
 
