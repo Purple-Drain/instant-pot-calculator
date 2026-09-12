@@ -15,7 +15,12 @@ dried beans, and a couple of Middle Eastern combo dishes. Single static page, no
    at the recommended soak time — soaking longer than recommended doesn't model any extra
    benefit.
 
-Water is always rounded to the nearest 10 mL.
+Water is always rounded to the nearest 10 mL. The Results card also shows a rough total time
+(pressurising + cook + release) and warns when the liquid is under the ~250 mL an Instant Pot
+needs to reach pressure, or when the batch would pass the half-full line of a 6 qt pot.
+Quinoa, oats, lentils and congee all foam under pressure, so none of them use Quick Release.
+
+Your last category, item, weight and unit choices are remembered in `localStorage`.
 
 ## Ratios & times
 
@@ -27,9 +32,9 @@ Water is always rounded to the nearest 10 mL.
 | Rice | Standard Brown | 1.25 / 22 min | 2 hrs | 1.10 / 18 min | 10 Min NPR |
 | Oats | Steel-Cut | 4.0 / 4 min | 8 hrs | 3.0 / 1 min | 10 Min NPR |
 | Oats | Rolled (Old-Fashioned) | 3.0 / 1 min | not needed | — | 10 Min NPR |
-| Quinoa | Quinoa | 1.4 / 1 min | 20 min | 1.3 / 1 min | Quick Release |
-| Lentils | Red (Split) | 2.2 / 2 min | not needed | — | Quick Release |
-| Lentils | Brown/Green | 2.2 / 9 min | 1 hr | 1.20 / 6 min | 10 Min NPR |
+| Quinoa | Quinoa | 1.4 / 1 min | 20 min | 1.3 / 1 min | 10 Min NPR |
+| Lentils | Red (Split) | 2.2 / 4 min | not needed | — | 10 Min NPR |
+| Lentils | Brown/Green | 2.2 / 9 min | 1 hr | 1.60 / 6 min | 10 Min NPR |
 | Beans | Chickpeas | 3.6 / 38 min | 8 hrs | 2.6 / 13 min | 15 Min NPR |
 | Beans | Kidney (Red) | 3.5 / 45 min | 8 hrs | 2.5 / 12 min | 15 Min NPR |
 | Beans | Cannellini | 3.5 / 35 min | 8 hrs | 2.5 / 12 min | 15 Min NPR |
@@ -44,9 +49,11 @@ Water is always rounded to the nearest 10 mL.
 Figures are community-typical Instant Pot numbers meant for a quick kitchen calculator, not a
 certified reference.
 
-**⚠️ Kidney beans & cannellini:** dried kidney-family beans contain a natural toxin destroyed
-only by a full rolling boil. After soaking, boil hard (uncovered) for 10 minutes before pressure
-cooking — the app surfaces this warning whenever either item is selected.
+**⚠️ Kidney beans & cannellini:** dried kidney-family beans contain phytohaemagglutinin, a
+toxin destroyed by 10 minutes at a full boil (a full pressure-cook cycle runs hotter than that,
+but a slow cooker does not). Discard the soaking water and boil hard (uncovered) for 10 minutes
+before pressure cooking as an extra safeguard; the app surfaces this whenever either item is
+selected.
 
 ## Stack
 

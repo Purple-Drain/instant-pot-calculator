@@ -38,7 +38,7 @@
                     <span class="chevron">▾</span>
                 </button>
                 <div id="section-category" class="section-body">
-                    <div id="category-grid" class="grid grid-cols-3 gap-2"></div>
+                    <div id="category-grid" class="grid grid-cols-4 gap-2"></div>
                 </div>
             </div>
 
@@ -67,7 +67,7 @@
 
             <div class="space-y-2" id="block-soak">
                 <button type="button" data-section="soak" class="section-toggle w-full flex items-center justify-between text-xs font-bold text-gray-500 uppercase tracking-wider">
-                    <span>Soak Time</span>
+                    <span id="soak-label">Soak Time</span>
                     <span class="chevron">▾</span>
                 </button>
                 <div id="section-soak" class="section-body space-y-2 animate-fade-in">
@@ -86,6 +86,7 @@
                                 ↺ Reset to recommended
                             </button>
                         </div>
+                        <div id="soak-cap-note" class="hidden text-xs text-slate-400 text-center mt-1"></div>
                     </div>
                     <div id="note" class="text-xs font-semibold text-slate-500 text-center px-1"></div>
                     <div id="warning" class="hidden text-xs font-bold text-amber-800 bg-amber-50 border border-amber-200 rounded-lg p-3 text-center"></div>
@@ -119,7 +120,7 @@
                                 <div id="prep-wash-bicarb" class="text-lg font-black text-slate-800">1 tsp</div>
                             </div>
                         </div>
-                        <div class="text-xs text-slate-400 text-center">~1 tsp bicarb per 2 cups (500mL) water, enough to submerge — adjust for your bowl size.</div>
+                        <div class="text-xs text-slate-400 text-center">~1 tsp bicarb per 2 cups (500mL) water, enough to submerge; adjust for your bowl size.</div>
                     </div>
                     <div id="prep-cleaning"></div>
                     <div id="prep-destarch"></div>
@@ -161,6 +162,7 @@
                                     <span id="time" class="text-4xl font-black text-slate-800">0</span>
                                     <span class="text-lg font-bold text-slate-400 mb-1">min</span>
                                 </div>
+                                <div id="total-time" class="text-xs font-semibold text-slate-400 mt-1"></div>
                             </div>
                         </div>
                         <div class="flex justify-between items-center pt-1">
@@ -172,6 +174,7 @@
                                 </div>
                             </div>
                         </div>
+                        <div id="liquid-warning" class="hidden text-xs font-bold text-amber-800 bg-amber-50 border border-amber-200 rounded-lg p-3 text-center"></div>
                     </div>
                 </div>
             </div>
@@ -183,6 +186,9 @@
                 </button>
                 <div id="section-method" class="section-body">
                     <ol id="method-list" class="list-decimal list-inside space-y-1.5 text-sm text-slate-700 bg-slate-50 border border-slate-200 rounded-xl p-4"></ol>
+                    <div class="text-center mt-2">
+                        <button id="copy-method" type="button" class="text-xs font-bold text-blue-600 hover:text-blue-800 underline underline-offset-2">📋 Copy method</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -198,6 +204,10 @@
     // methodIntro/methodOutro = optional extra steps prepended/appended to the
     // generic pressure-cooking method (e.g. caramelizing onions for Mujaddara).
     // skipRinse = true skips the generic "rinse" step (oats don't need it).
+    // rinseStep (item or category) = replaces the generic rinse wording, e.g.
+    // "pick over for stones" for pulses. defaultOutro (category) = the closing
+    // Method step when an item has no methodOutro ("fluff with a fork" is only
+    // right for grains).
     // gramsPerCup = approximate weight of 1 US cup of this dry ingredient, only
     // used to convert the weight input to/from "cup" units (water needs no such
     // figure since it's converted by pure volume/mass math).
@@ -206,28 +216,28 @@
             label: 'Rice', icon: '🍚',
             items: {
                 'white-basmati': {
-                    label: 'White Basmati', icon: '🍚',
+                    label: 'White Basmati', icon: '🍚', ingredientLabel: 'basmati rice',
                     ratio: 1.2, time: 4, release: '10 Min NPR', gramsPerCup: 185,
                     soakMinutes: 30, defaultSoakMinutes: 30,
                     soak: { ratio: 1.0, time: 1 },
                     note: '💧 Soaked 30 min: cuts water & 3 min off cook time, fluffier separate grains',
                 },
                 'jasmine': {
-                    label: 'Jasmine', icon: '🌸',
+                    label: 'Jasmine', icon: '🌸', ingredientLabel: 'jasmine rice',
                     ratio: 1.1, time: 3, release: '10 Min NPR', gramsPerCup: 185,
                     soakMinutes: 30, defaultSoakMinutes: 0,
                     soak: { ratio: 1.0, time: 2 },
                     note: '💧 Soaking 20–30 min is optional for jasmine: less sticky, 1 min less cook time',
                 },
                 'brown-basmati': {
-                    label: 'Brown Basmati', icon: '🌾',
+                    label: 'Brown Basmati', icon: '🌾', ingredientLabel: 'brown basmati rice',
                     ratio: 1.25, time: 20, release: '10 Min NPR', gramsPerCup: 190,
                     soakMinutes: 120, defaultSoakMinutes: 120,
                     soak: { ratio: 1.1, time: 16 },
                     note: '💧 Soaked 2+ hrs (recommended): less water, cooks 4 min faster & more evenly',
                 },
                 'standard-brown': {
-                    label: 'Standard Brown', icon: '🟤',
+                    label: 'Standard Brown', icon: '🟤', ingredientLabel: 'brown rice',
                     ratio: 1.25, time: 22, release: '10 Min NPR', gramsPerCup: 195,
                     soakMinutes: 120, defaultSoakMinutes: 120,
                     soak: { ratio: 1.1, time: 18 },
@@ -237,9 +247,10 @@
         },
         oats: {
             label: 'Oats', icon: '🌾',
+            defaultOutro: 'Stir well (it thickens as it stands), then add milk, sweetener, or fruit to taste.',
             items: {
                 'steel-cut': {
-                    label: 'Steel-Cut', icon: '🌾',
+                    label: 'Steel-Cut', icon: '🌾', ingredientLabel: 'steel-cut oats',
                     ratio: 4.0, time: 4, release: '10 Min NPR', gramsPerCup: 175,
                     soakMinutes: 480, defaultSoakMinutes: 480,
                     soak: { ratio: 3.0, time: 1 },
@@ -247,11 +258,11 @@
                     skipRinse: true,
                 },
                 'rolled': {
-                    label: 'Rolled (Old-Fashioned)', icon: '🥣',
+                    label: 'Rolled (Old-Fashioned)', icon: '🥣', ingredientLabel: 'rolled oats',
                     ratio: 3.0, time: 1, release: '10 Min NPR', gramsPerCup: 85,
                     soakMinutes: 0, defaultSoakMinutes: 0,
                     soak: null,
-                    note: 'No soak needed — rolled oats are already soft; soaking can make them mushy. Oats foam under pressure, so let them release naturally rather than venting straight away.',
+                    note: 'No soak needed; rolled oats are already soft and soaking makes them mushy. Oats foam under pressure, so let them release naturally rather than venting straight away.',
                     skipRinse: true,
                 },
             },
@@ -261,34 +272,40 @@
             items: {
                 'quinoa': {
                     label: 'Quinoa', icon: '🌱',
-                    ratio: 1.4, time: 1, release: 'Quick Release', gramsPerCup: 170,
+                    ratio: 1.4, time: 1, release: '10 Min NPR', gramsPerCup: 170,
                     soakMinutes: 20, defaultSoakMinutes: 20,
                     soak: { ratio: 1.3, time: 1 },
-                    note: '💧 Soaking (& rinsing) 20–30 min removes bitterness (saponins) and aids digestion',
+                    note: '💧 Soaking (& rinsing) 20–30 min removes bitterness (saponins) and aids digestion. Quinoa foams, so let it release naturally.',
+                    rinseStep: 'Rinse the quinoa in a fine-mesh sieve under cold water for a minute to wash off the bitter saponin coating.',
                 },
             },
         },
         lentils: {
             label: 'Lentils', icon: '🟤',
+            rinseStep: 'Pick over the lentils for stones and debris, then rinse under cold water.',
+            defaultOutro: 'Season with salt and serve.',
             items: {
                 'red': {
-                    label: 'Red (Split)', icon: '🔴',
-                    ratio: 2.2, time: 2, release: 'Quick Release', gramsPerCup: 195,
+                    label: 'Red (Split)', icon: '🔴', ingredientLabel: 'red lentils',
+                    ratio: 2.2, time: 4, release: '10 Min NPR', gramsPerCup: 195,
                     soakMinutes: 0, defaultSoakMinutes: 0,
                     soak: null,
-                    note: 'No soak needed — split red lentils cook fast and soften either way',
+                    note: 'No soak needed; split red lentils cook fast and break down into a soft dal either way. They foam, so let the pressure drop naturally.',
+                    methodOutro: 'Stir well (it thickens as it stands), season with salt, and serve.',
                 },
                 'brown-green': {
-                    label: 'Brown/Green', icon: '🟤',
+                    label: 'Brown/Green', icon: '🟤', ingredientLabel: 'lentils',
                     ratio: 2.2, time: 9, release: '10 Min NPR', gramsPerCup: 192,
                     soakMinutes: 60, defaultSoakMinutes: 60,
-                    soak: { ratio: 1.2, time: 6 },
+                    soak: { ratio: 1.6, time: 6 },
                     note: '💧 Soaked 1 hr (recommended): cooks faster & more evenly (not strictly required)',
                 },
             },
         },
         beans: {
             label: 'Beans', icon: '🫘',
+            rinseStep: 'Pick over the beans for stones and shrivelled ones, then rinse under cold water.',
+            defaultOutro: 'Check a bean is tender (if not, cook 5 min more on High Pressure), then season with salt, drain any excess liquid, and serve.',
             items: {
                 'chickpeas': {
                     label: 'Chickpeas', icon: '🟡',
@@ -298,21 +315,21 @@
                     note: '💧 Soaked overnight (8 hrs, recommended): time drops from 38 to 13 min, creamier texture',
                 },
                 'kidney': {
-                    label: 'Kidney (Red)', icon: '🔴',
+                    label: 'Kidney (Red)', icon: '🔴', ingredientLabel: 'kidney beans',
                     ratio: 3.5, time: 45, release: '15 Min NPR', gramsPerCup: 185,
                     soakMinutes: 480, defaultSoakMinutes: 480,
                     soak: { ratio: 2.5, time: 12 },
                     note: '💧 Soaked overnight (8 hrs, recommended): time drops from 45 to 12 min',
-                    warning: '⚠️ Dried kidney beans contain a natural toxin that only a full rolling boil destroys. After soaking, boil hard (uncovered) 10 min before pressure cooking — do not rely on pressure cooking alone.',
+                    warning: '⚠️ Dried kidney beans contain phytohaemagglutinin, a toxin destroyed by 10 min at a full boil. Discard the soaking water, never cook them in a slow cooker or on low heat, and boil hard (uncovered) 10 min before pressure cooking as an extra safeguard.',
                     toxinBoil: true,
                 },
                 'cannellini': {
-                    label: 'Cannellini', icon: '⚪',
+                    label: 'Cannellini', icon: '⚪', ingredientLabel: 'cannellini beans',
                     ratio: 3.5, time: 35, release: '15 Min NPR', gramsPerCup: 185,
                     soakMinutes: 480, defaultSoakMinutes: 480,
                     soak: { ratio: 2.5, time: 12 },
                     note: '💧 Soaked overnight (8 hrs, recommended): time drops from 35 to 12 min',
-                    warning: '⚠️ Same bean family as kidney beans — after soaking, boil hard (uncovered) 10 min before pressure cooking to neutralize natural toxins.',
+                    warning: '⚠️ Same bean family as kidney beans: discard the soaking water and boil hard (uncovered) 10 min before pressure cooking as an extra safeguard against natural toxins.',
                     toxinBoil: true,
                 },
                 'black': {
@@ -330,11 +347,11 @@
                     note: '💧 Soaked overnight (8 hrs, recommended): time drops from 25 to 15 min',
                 },
                 'ful-medames': {
-                    label: 'Ful Medames (Fava)', icon: '🫘',
+                    label: 'Ful Medames (Fava)', icon: '🫘', ingredientLabel: 'fava beans',
                     ratio: 3.8, time: 45, release: '15 Min NPR', gramsPerCup: 180,
                     soakMinutes: 600, defaultSoakMinutes: 600,
                     soak: { ratio: 2.8, time: 20 },
-                    note: '💧 Use whole, skin-on dried fava (not split) — soaking 8–12 hrs (recommended 10) is essential and roughly halves cook time',
+                    note: '💧 Use whole, skin-on dried fava (not split). Soaking 8–12 hrs (recommended 10) is essential and roughly halves cook time',
                     methodOutro: 'Lightly mash, then drizzle with olive oil, lemon juice, and a pinch of cumin before serving.',
                 },
             },
@@ -343,37 +360,40 @@
             label: 'Combo Dishes', icon: '🍛',
             items: {
                 'mujaddara': {
-                    label: 'Mujaddara (Lentils+Rice)', icon: '🍛',
+                    label: 'Mujaddara (Lentils+Rice)', icon: '🍛', ingredientLabel: 'lentils and rice',
+                    rinseStep: 'Rinse the lentils and the rice separately under cold water; pick over the lentils for stones.',
                     ratio: 2.5, time: 10, release: '10 Min NPR', gramsPerCup: 190,
                     soakMinutes: 60, defaultSoakMinutes: 0,
                     soak: { ratio: 2.3, time: 8 },
-                    note: 'Weight = combined lentils + rice, split 1:1 by weight. Traditional recipe skips soaking; pre-soaking the lentils ~1 hr trims a couple minutes if you want to.',
-                    methodIntro: ['Thinly slice 2 onions and fry in oil until deep golden brown; set aside for garnish.'],
+                    note: 'Weight = combined brown/green lentils + white basmati, split 1:1 by weight. Traditional recipe skips soaking; pre-soaking the lentils ~1 hr trims a couple of minutes if you want to.',
+                    methodIntro: ['Thinly slice 1 large onion per 200g dry mix and fry in oil (on Sauté or in a pan) until deep golden brown; set aside for garnish. If using Sauté, deglaze the pot with a splash of water so nothing is stuck to the base.'],
                     methodOutro: 'Fluff, top with the caramelized onions, and serve warm.',
                 },
             },
         },
         congee: {
             label: 'Congee', icon: '🥣',
+            defaultOutro: 'Stir well; it thickens as it stands, so thin with hot water to taste.',
             items: {
                 'plain': {
                     label: 'Plain Congee', icon: '🥣', ingredientLabel: 'Rice',
                     ratio: 8.0, time: 20, release: 'Full NPR', gramsPerCup: 185,
                     soakMinutes: 0, defaultSoakMinutes: 0,
                     soak: null,
-                    note: 'Congee uses ~6–8x water to rice by volume (vs ~1:1 for steamed rice) — no soak needed, the long cook and natural release break the grains down into porridge on their own.',
-                    warning: '⚠️ Congee foams and expands a lot — never fill the pot past the half-full line, and always let the pressure release fully and naturally (no quick release) to avoid clogging the valve with starchy foam.',
+                    note: 'Congee uses ~6–8x water to rice by volume (vs ~1:1 for steamed rice). No soak needed; the long cook and natural release break the grains down into porridge on their own.',
+                    warning: '⚠️ Congee foams and expands a lot. Never fill the pot past the half-full line, and always let the pressure release fully and naturally (no quick release) to avoid clogging the valve with starchy foam.',
+                    methodOutro: 'Stir well; it thickens as it stands, so thin with hot water to taste. Season with salt and top with spring onion, ginger, sesame oil, or a soft egg.',
                 },
                 'beef-mince': {
                     label: 'Beef Mince Congee', icon: '🥩', ingredientLabel: 'Rice',
                     ratio: 8.0, time: 20, release: 'Full NPR', gramsPerCup: 185,
                     soakMinutes: 0, defaultSoakMinutes: 0,
                     soak: null,
-                    note: 'Weight = dry rice only — the beef mince and aromatics are browned and stirred in separately, see Method below.',
-                    warning: '⚠️ Congee foams and expands a lot — never fill the pot past the half-full line, and always let the pressure release fully and naturally (no quick release) to avoid clogging the valve with starchy foam.',
+                    note: 'Weight = dry rice only. The beef mince and aromatics are browned and stirred in separately, see Method below.',
+                    warning: '⚠️ Congee foams and expands a lot. Never fill the pot past the half-full line, and always let the pressure release fully and naturally (no quick release) to avoid clogging the valve with starchy foam.',
                     methodIntro: [
                         'Mince 3 cloves garlic, grate 2cm fresh ginger, and finely slice the white parts of 2 spring onions (keep the green parts for garnish).',
-                        'On Sauté, brown 300g beef mince in a little oil, breaking it up, until no longer pink; stir in the garlic, ginger, and spring onion whites for 1 min, then turn off Sauté.',
+                        'On Sauté, brown the beef mince (about 1.5x the dry rice weight, e.g. 300g mince for 200g rice) in a little oil, breaking it up, until no longer pink; stir in the garlic, ginger, and spring onion whites for 1 min, then turn off Sauté and deglaze with a splash of the cooking liquid so nothing is stuck to the base.',
                     ],
                     methodOutro: 'Stir the beef mince mixture back through the congee, then top with the reserved spring onion greens, a drizzle of sesame oil, and white pepper to taste.',
                     liquidOptions: {
@@ -395,9 +415,9 @@
                     prepGuide: {
                         cleaning: [
                             'Scrub under cold running water with a vegetable brush to remove dirt.',
-                            'For a deeper clean, wash in a diluted bicarbonate-of-soda solution (1 tsp bicarb per 2 cups/500mL water) for 12–15 min — cuts surface bacteria and pesticide residue better than water alone — then rinse well under running water.',
+                            'For a deeper clean, wash in a diluted bicarbonate-of-soda solution (1 tsp bicarb per 2 cups/500mL water) for 12–15 min (cuts surface bacteria and pesticide residue better than water alone), then rinse well under running water.',
                             'Cut away any eyes, sprouts, or green-tinged skin (green = solanine, mildly toxic).',
-                            'Peel if the method calls for it — skins are otherwise fine to leave on.',
+                            'Peel if the method calls for it; skins are otherwise fine to leave on.',
                         ],
                         destarch: [
                             'Cut into the size/shape the method needs.',
@@ -412,7 +432,7 @@
                                     'Cold-water destarch soak (see above), then pat thoroughly dry.',
                                     'Par-boil in salted water with ½ tsp bicarbonate of soda per litre, 5–6 min, until edges just soften but centres are still firm.',
                                     'Drain, then shake in the colander to rough up the edges; let steam-dry a few minutes.',
-                                    'Fry or bake: deep fry at 130–140°C for 5–6 min (cook through), cool, then fry again at 180–190°C for 2–3 min to crisp — or toss in oil and oven-bake at 220°C (425°F) 25–35 min, flipping halfway.',
+                                    'Fry or bake: deep fry at 130–140°C for 5–6 min (cook through), cool, then fry again at 180–190°C for 2–3 min to crisp, or toss in oil and oven-bake at 220°C (425°F) 25–35 min, flipping halfway.',
                                 ],
                             },
                             {
@@ -448,8 +468,8 @@
                     prepGuide: {
                         cleaning: [
                             'Scrub under cold running water; cut away any blemishes.',
-                            'For a deeper clean, wash in a diluted bicarbonate-of-soda solution (1 tsp bicarb per 2 cups/500mL water) for 12–15 min, then rinse well — cuts surface bacteria and pesticide residue better than water alone.',
-                            'Peel if desired — the skin is edible and thin, so peeling is optional.',
+                            'For a deeper clean, wash in a diluted bicarbonate-of-soda solution (1 tsp bicarb per 2 cups/500mL water) for 12–15 min, then rinse well. Cuts surface bacteria and pesticide residue better than water alone.',
+                            'Peel if desired; the skin is edible and thin, so peeling is optional.',
                         ],
                         destarch: [
                             'Cut into the size the method needs.',
@@ -469,9 +489,9 @@
                             {
                                 id: 'curry', label: 'Curry',
                                 steps: [
-                                    'Peel and cut into 2–3cm cubes — no destarch soak needed.',
-                                    'Add directly to the curry sauce (sweet potato cooks fast and holds its shape).',
-                                    'Simmer 15–20 min until tender.',
+                                    'Peel and cut into 2–3cm cubes; no destarch soak needed.',
+                                    'Add to the curry sauce in the last 15–20 min of cooking (sweet potato cooks fast and turns to mush if added too early).',
+                                    'Simmer gently until just tender, then stop; it keeps softening off the heat.',
                                 ],
                             },
                             {
@@ -490,7 +510,7 @@
                     prepGuide: {
                         cleaning: [
                             'Rinse under cold water, rubbing off any wax or residue.',
-                            'For a deeper clean, wash in a diluted bicarbonate-of-soda solution (1 tsp bicarb per 2 cups/500mL water) for 12–15 min, then rinse well — cuts surface bacteria and pesticide residue better than water alone (worth it if the skin is staying on).',
+                            'For a deeper clean, wash in a diluted bicarbonate-of-soda solution (1 tsp bicarb per 2 cups/500mL water) for 12–15 min, then rinse well. Cuts surface bacteria and pesticide residue better than water alone (worth it if the skin is staying on).',
                             'Peel with a vegetable peeler if the method wants it (skin-on is fine once cooked soft/blended).',
                             'Core with a corer or knife: quarter, then cut out the core from each wedge.',
                             'To stop cut apple browning, toss slices in water with 1 tbsp lemon juice per cup while you prep the rest.',
@@ -528,7 +548,7 @@
         },
     };
 
-    // Produce items carry a `prepGuide` instead of ratio/time/release/soak — they
+    // Produce items carry a `prepGuide` instead of ratio/time/release/soak, so they
     // aren't pressure-cook ratios at all, so render() branches into renderPrepGuide()
     // for them rather than forcing fake values through the ratio-based path.
     const isPrepItem = (item) => !!item.prepGuide;
@@ -537,10 +557,21 @@
         '10 Min NPR': 'Let the pressure release naturally for 10 minutes, then quick-release any remainder.',
         '15 Min NPR': 'Let the pressure release naturally for 15 minutes, then quick-release any remainder.',
         'Quick Release': 'Use Quick Release to vent the pressure as soon as cooking finishes.',
-        'Full NPR': 'Let the pressure release fully and naturally — do not quick-release. Congee foams as it cooks, and releasing early or quickly can spit hot starchy liquid through the valve; a full natural release (roughly 15–25 min) is the safe way to vent.',
+        'Full NPR': 'Let the pressure release fully and naturally (roughly 15–25 min) and do not quick-release. Starchy, foamy foods like congee can spit hot liquid through the valve if vented early.',
     };
 
+    // Approximate minutes each release method takes, for the total-time estimate.
+    const RELEASE_MINUTES = { '10 Min NPR': 10, '15 Min NPR': 15, 'Quick Release': 1, 'Full NPR': 20 };
+
+    // Instant Pot needs roughly a cup of thin liquid to come to pressure (a 6 qt
+    // pot; 8 qt wants more), and foamy grains/pulses must stay under the
+    // half-full line. Both are shown as warnings, never enforced.
+    const MIN_LIQUID_ML = 250;
+    const HALF_FULL_ML = 2800;
+
     const SOAK_STEP = 0.5;
+    const MAX_SOAK_HOURS = 24;
+    const clampHours = (h) => Math.min(MAX_SOAK_HOURS, Math.max(0, Number.isFinite(h) ? h : 0));
 
     let weight = 300;
     let currentCategory = 'rice';
@@ -555,7 +586,23 @@
     const soakFraction = (item, hours) => {
         if (!item.soak || item.soakMinutes <= 0) return 0;
         const capHours = item.soakMinutes / 60;
-        return Math.min(hours, capHours) / capHours;
+        return Math.min(Math.max(hours, 0), capHours) / capHours;
+    };
+
+    // Rough wall-clock estimate: time to reach pressure scales with the liquid
+    // volume, then the cook time, then the release.
+    const estimateTotalMinutes = (item, water, time) => {
+        const pressurise = water >= 1500 ? 15 : water >= 750 ? 12 : 8;
+        return pressurise + time + (RELEASE_MINUTES[item.release] || 10);
+    };
+
+    const formatDuration = (hours) => {
+        const mins = Math.round(hours * 60);
+        if (mins < 60) return `${mins} min`;
+        const h = Math.floor(mins / 60);
+        const m = mins % 60;
+        const hText = h === 1 ? '1 hr' : `${h} hrs`;
+        return m ? `${hText} ${m} min` : hText;
     };
 
     const activeRatio = (item, hours) => {
@@ -576,7 +623,7 @@
     };
 
     const weightLabelFor = (categoryId) => {
-        if (categoryId === 'combo') return 'Combined Dry Weight — Lentils + Rice, 1:1';
+        if (categoryId === 'combo') return 'Combined Dry Weight (Lentils + Rice, 1:1)';
         if (categoryId === 'congee') return 'Dry Rice Weight (for Congee)';
         return `Dry ${categories[categoryId].label} Weight`;
     };
@@ -589,7 +636,7 @@
 
     const itemLabelFor = (categoryId) => (categoryId === 'combo' ? 'Dish' : `${categories[categoryId].label} Type`);
 
-    // --- Unit conversion (display/input boundary only — `weight` stays canonical
+    // --- Unit conversion (display/input boundary only; `weight` stays canonical
     // in grams and `water` stays canonical in mL throughout the rest of the app) ---
     const GRAMS_PER_OZ = 28.3495;
     const ML_PER_CUP = 236.588;
@@ -635,26 +682,32 @@
         return unit === 'floz' ? v.toFixed(1) : v.toFixed(2);
     };
 
-    const generateMethodSteps = (item, water, time, hours, liquid) => {
+    const generateMethodSteps = (item, category, water, time, hours, liquid, unit) => {
         const steps = [];
         const ingredientLabel = (item.ingredientLabel || item.label).toLowerCase();
         if (item.methodIntro) steps.push(...item.methodIntro);
         if (!item.skipRinse) {
-            steps.push(`Rinse the dry ${ingredientLabel} under cold water until it runs clear.`);
+            steps.push(item.rinseStep || category.rinseStep
+                || `Rinse the dry ${ingredientLabel} under cold water until it runs clear.`);
         }
         if (item.soak && hours > 0) {
-            const hrsText = hours === 1 ? '1 hr' : `${hours} hrs`;
-            steps.push(`Soak in water for ${hrsText}, then drain.`);
+            const capHours = item.soakMinutes / 60;
+            const soaked = Math.min(hours, capHours);
+            const longer = hours > capHours ? ` (anything past ${formatDuration(capHours)} adds nothing, so ${formatDuration(hours)} is fine but not needed)` : '';
+            steps.push(`Soak in plenty of cold water for ${formatDuration(soaked)}${longer}, then drain and discard the soaking water.`);
         }
         if (item.toxinBoil) {
-            steps.push('Boil hard, uncovered, for 10 minutes to neutralize natural toxins, then proceed.');
+            steps.push('Cover with fresh water and boil hard, uncovered, for 10 minutes (on Sauté or the stove) to destroy natural toxins, then drain.');
         }
         const liquidWord = liquid ? liquid.label.toLowerCase() : 'water';
-        steps.push(`Add the ${ingredientLabel} to the Instant Pot with ${water} mL ${liquidWord}.`);
+        const waterText = unit === 'mL'
+            ? `${water} mL`
+            : `${formatWater(water, unit)} ${WATER_UNITS.find((u) => u.id === unit).label} (${water} mL)`;
+        steps.push(`Add the ${ingredientLabel} to the Instant Pot with ${waterText} ${liquidWord}.`);
         steps.push('Close the lid and set the valve to Sealing.');
         steps.push(`Cook on High Pressure for ${time} min.`);
         steps.push(RELEASE_INSTRUCTIONS[item.release] || `Release: ${item.release}.`);
-        steps.push(item.methodOutro || 'Fluff with a fork and serve.');
+        steps.push(item.methodOutro || category.defaultOutro || 'Fluff with a fork and serve.');
         return steps;
     };
 
@@ -687,6 +740,11 @@
     const soakIncBtn = document.getElementById('soak-inc');
     const soakResetBtn = document.getElementById('soak-reset');
     const noteEl = document.getElementById('note');
+    const soakLabel = document.getElementById('soak-label');
+    const soakCapNote = document.getElementById('soak-cap-note');
+    const totalTimeEl = document.getElementById('total-time');
+    const liquidWarningEl = document.getElementById('liquid-warning');
+    const copyMethodBtn = document.getElementById('copy-method');
     const warningEl = document.getElementById('warning');
     const liquidSelect = document.getElementById('liquid-select');
     const liquidToggle = document.getElementById('liquid-toggle');
@@ -711,6 +769,33 @@
     let weightUnit = 'g';
     let waterUnit = 'mL';
     let prepWashWeight = 500;
+
+    // Remember the last selection and units so reopening the page in the kitchen
+    // lands where you left off. Failure (private mode, blocked storage) is silent.
+    const STORAGE_KEY = 'ipcalc-state-v1';
+    const saveState = () => {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                currentCategory, currentItemId, weight, weightUnit, waterUnit,
+            }));
+        } catch (e) { /* storage unavailable */ }
+    };
+    const loadState = () => {
+        try {
+            const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+            if (!saved) return;
+            if (categories[saved.currentCategory] && categories[saved.currentCategory].items[saved.currentItemId]) {
+                currentCategory = saved.currentCategory;
+                currentItemId = saved.currentItemId;
+            }
+            if (Number.isFinite(saved.weight) && saved.weight > 0) weight = saved.weight;
+            if (WEIGHT_UNITS.some((u) => u.id === saved.weightUnit)) weightUnit = saved.weightUnit;
+            if (WATER_UNITS.some((u) => u.id === saved.waterUnit)) waterUnit = saved.waterUnit;
+        } catch (e) { /* ignore corrupt or unavailable storage */ }
+    };
+    loadState();
+    soakHours = (currentItem().defaultSoakMinutes || 0) / 60;
+    selectedLiquidId = currentItem().liquidOptions ? currentItem().liquidOptions.recommended : null;
 
     const UNIT_BTN_BASE = 'px-3 py-1 rounded-full text-xs font-bold border-2 transition-colors';
 
@@ -791,6 +876,7 @@
         const expanded = sectionExpanded[id];
         body.classList.toggle('hidden', !expanded);
         chevron.textContent = expanded ? '▾' : '▸';
+        chevron.parentElement.setAttribute('aria-expanded', String(expanded));
     }
 
     document.querySelectorAll('.section-toggle').forEach((btn) => {
@@ -844,26 +930,43 @@
 
     // --- Weight input ---
     weightInput.addEventListener('input', (e) => {
-        const typed = parseFloat(e.target.value) || 0;
+        const typed = Math.max(0, parseFloat(e.target.value) || 0);
         weight = displayToGrams(typed, weightUnit, currentItem());
         render();
+    });
+    weightInput.addEventListener('blur', () => {
+        weightInput.value = formatWeight(weight, weightUnit, currentItem());
+    });
+
+    copyMethodBtn.addEventListener('click', async () => {
+        const item = currentItem();
+        const lines = [...methodList.querySelectorAll('li')].map((li, i) => `${i + 1}. ${li.textContent}`);
+        const text = `${item.label}, ${Math.round(weight)} g dry\n${lines.join('\n')}`;
+        try {
+            await navigator.clipboard.writeText(text);
+            copyMethodBtn.textContent = '✅ Copied';
+        } catch (e) {
+            copyMethodBtn.textContent = '⚠️ Copy not available';
+        }
+        setTimeout(() => { copyMethodBtn.textContent = '📋 Copy method'; }, 1500);
     });
 
     // --- Soak hours: typed input, +/- stepper, and reset ---
     const roundHours = (h) => Math.max(0, Math.round(h * 100) / 100);
 
     soakInput.addEventListener('input', (e) => {
-        soakHours = parseFloat(e.target.value) || 0;
+        soakHours = clampHours(parseFloat(e.target.value));
         render();
     });
+    soakInput.addEventListener('blur', () => { soakInput.value = roundHours(soakHours); });
 
     soakDecBtn.addEventListener('click', () => {
-        soakHours = roundHours(soakHours - SOAK_STEP);
+        soakHours = clampHours(roundHours(soakHours - SOAK_STEP));
         render();
     });
 
     soakIncBtn.addEventListener('click', () => {
-        soakHours = roundHours(soakHours + SOAK_STEP);
+        soakHours = clampHours(roundHours(soakHours + SOAK_STEP));
         render();
     });
 
@@ -877,7 +980,9 @@
 
         const catBase = 'py-2 px-1 rounded-lg font-bold flex flex-col items-center gap-1 transition-all border-2';
         categoryGrid.querySelectorAll('button').forEach((btn) => {
-            btn.className = btn.dataset.id === currentCategory
+            const active = btn.dataset.id === currentCategory;
+            btn.setAttribute('aria-pressed', String(active));
+            btn.className = active
                 ? `${catBase} bg-blue-100 text-blue-800 border-blue-600 shadow-sm`
                 : `${catBase} bg-gray-50 text-gray-500 border-transparent hover:bg-gray-100`;
         });
@@ -887,10 +992,14 @@
         }
         const itemBase = 'py-3 px-2 rounded-xl font-bold text-sm flex flex-col items-center gap-1 transition-all border-2';
         itemGrid.querySelectorAll('button').forEach((btn) => {
-            btn.className = btn.dataset.id === currentItemId
+            const active = btn.dataset.id === currentItemId;
+            btn.setAttribute('aria-pressed', String(active));
+            btn.className = active
                 ? `${itemBase} bg-blue-100 text-blue-800 border-blue-600 shadow-sm`
                 : `${itemBase} bg-gray-50 text-gray-500 border-transparent hover:bg-gray-100`;
         });
+
+        saveState();
 
         weightLabel.textContent = weightLabelFor(currentCategory);
         itemLabel.textContent = itemLabelFor(currentCategory);
@@ -907,7 +1016,11 @@
             return;
         }
 
-        weightInput.value = formatWeight(weight, weightUnit, item);
+        // Only rewrite the input when the user isn't typing in it, otherwise
+        // "1." becomes "1.00" mid-keystroke in oz/cup mode.
+        if (document.activeElement !== weightInput) {
+            weightInput.value = formatWeight(weight, weightUnit, item);
+        }
         const unitBtnClass = (active) => `${UNIT_BTN_BASE} ${active
             ? 'bg-blue-600 text-white border-blue-600'
             : 'bg-gray-50 text-gray-500 border-gray-200 hover:bg-gray-100'}`;
@@ -920,9 +1033,18 @@
 
         if (item.soak) {
             soakControls.classList.remove('hidden');
-            soakInput.value = soakHours;
+            soakLabel.textContent = 'Soak Time (hours)';
+            if (document.activeElement !== soakInput) soakInput.value = roundHours(soakHours);
+            const capHours = item.soakMinutes / 60;
+            if (soakHours > capHours) {
+                soakCapNote.textContent = `Benefit caps at ${formatDuration(capHours)}; longer soaks change nothing here.`;
+                soakCapNote.classList.remove('hidden');
+            } else {
+                soakCapNote.classList.add('hidden');
+            }
         } else {
             soakControls.classList.add('hidden');
+            soakLabel.textContent = 'Notes';
         }
 
         noteEl.textContent = item.note || '';
@@ -958,11 +1080,22 @@
         waterUnitLabel.textContent = WATER_UNITS.find((u) => u.id === waterUnit).label;
         waterLabelEl.textContent = liquid ? `Add ${liquid.label}` : 'Add Water';
         document.getElementById('time').textContent = time;
+        totalTimeEl.textContent = `≈ ${estimateTotalMinutes(item, water, time)} min total incl. pressurising & release`;
         document.getElementById('release').textContent = item.release;
+
+        if (water > 0 && water < MIN_LIQUID_ML) {
+            liquidWarningEl.textContent = `⚠️ ${water} mL is under the ~${MIN_LIQUID_ML} mL an Instant Pot needs to reach pressure. Cook a bigger batch, or use pot-in-pot with 250 mL water in the outer pot.`;
+            liquidWarningEl.classList.remove('hidden');
+        } else if (water + weight > HALF_FULL_ML) {
+            liquidWarningEl.textContent = '⚠️ This batch is over the half-full line of a 6 qt pot. Foamy grains and pulses expand a lot, so split it into two batches.';
+            liquidWarningEl.classList.remove('hidden');
+        } else {
+            liquidWarningEl.classList.add('hidden');
+        }
         document.getElementById('ratio').textContent = `Ratio 1 : ${activeRatio(item, soakHours).toFixed(2)} (dry : water)`;
 
         methodList.innerHTML = '';
-        generateMethodSteps(item, water, time, soakHours, liquid).forEach((step) => {
+        generateMethodSteps(item, categories[currentCategory], water, time, soakHours, liquid, waterUnit).forEach((step) => {
             const li = document.createElement('li');
             li.textContent = step;
             methodList.appendChild(li);
