@@ -48,6 +48,20 @@ optionally adjust soak time, get water/pressure-time/release-method plus a gener
   the rest default expanded.
 - `render()` is the single redraw function, called after every state mutation (weight/soak
   input, category/item click, stepper/reset click, etc.) — no framework, just re-render on write.
+  Two guards inside it: the weight and soak inputs are only rewritten when they are not the
+  `document.activeElement` (otherwise "1." becomes "1.00" mid-keystroke in oz/cup mode; a `blur`
+  handler normalises the value afterwards), and `saveState()` persists category/item/weight/units
+  to `localStorage` (`ipcalc-state-v1`, restored by `loadState()` before the first render).
+- Method wording hooks: `item.ingredientLabel` (see above), optional `rinseStep` on an item or
+  its category (pulses say "pick over for stones", quinoa says "fine-mesh sieve"), and optional
+  `defaultOutro` on a category used when an item has no `methodOutro` ("fluff with a fork" is
+  only right for grains). `generateMethodSteps` takes the category and the current water unit so
+  the "Add ___ with N mL" step matches the Results display.
+- Results card extras: `estimateTotalMinutes()` (pressurise + cook + `RELEASE_MINUTES`) and a
+  liquid warning when water is under `MIN_LIQUID_ML` (250) or water + dry weight passes
+  `HALF_FULL_ML` (2800). Advisory only; nothing is clamped. Soak hours are clamped to
+  0..`MAX_SOAK_HOURS` on input and a note appears when they exceed the item's `soakMinutes` cap.
+- No ratio item uses `'Quick Release'` any more: quinoa, oats, lentils and congee all foam.
 - Unit conversion happens only at the display/input boundary: `weight` (grams) and `water` (mL)
   stay canonical everywhere else. `weightUnit`/`waterUnit` state plus `gramsToDisplay`/
   `displayToGrams`/`mlToDisplay`/`formatWeight`/`formatWater` convert on the way in/out. Cup
