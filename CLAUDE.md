@@ -62,6 +62,17 @@ optionally adjust soak time, get water/pressure-time/release-method plus a gener
   `HALF_FULL_ML` (2800). Advisory only; nothing is clamped. Soak hours are clamped to
   0..`MAX_SOAK_HOURS` on input and a note appears when they exceed the item's `soakMinutes` cap.
 - No ratio item uses `'Quick Release'` any more: quinoa, oats, lentils and congee all foam.
+- `activeRelease(item, hours)`: release can also depend on soak state, not just ratio/time.
+  `item.soak.release` (currently only White Basmati's `'5 Min NPR'`) overrides `item.release`
+  once any soak hours are set. Pre-soaked grains clump under a full 10 min NPR because they need
+  less residual steam than unsoaked ones; this was a real bug report, not a hypothetical. Discrete
+  switch (not interpolated with `soakFraction()` like ratio/time), since release methods aren't a
+  continuum. `estimateTotalMinutes()` and the generated Method's release step both resolve through
+  this, not `item.release` directly.
+- `item.methodPreCook` (optional, array): extra Method steps inserted right before "Add the ___ to
+  the Instant Pot", for prep that happens after soaking/rinsing but before the pot goes on (White
+  Basmati's anti-clump oil-coating step is the first user). Same shape as `methodIntro`/
+  `methodOutro`, different insertion point.
 - Unit conversion happens only at the display/input boundary: `weight` (grams) and `water` (mL)
   stay canonical everywhere else. `weightUnit`/`waterUnit` state plus `gramsToDisplay`/
   `displayToGrams`/`mlToDisplay`/`formatWeight`/`formatWater` convert on the way in/out. Cup
