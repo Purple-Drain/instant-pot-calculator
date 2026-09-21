@@ -654,14 +654,15 @@
     // recipes run 1 cup of water in a 6 qt pot, since a grain batch's water is
     // all free at the start; 375 would warn on the app's own default screen, so
     // 3 and 6 qt use the practical 1 cup floor. 8 qt keeps the manual's 2 cups.
-    // congeeMaxRiceG: max dry rice for the congee category per pot. DERIVED, not
-    // measured: the 1:8 ratio (9 mL of pot fill per g of rice) against the half-full
-    // line above, rounded down. Shown as a warning, never clamped. One real 300 g run
-    // on the 6 qt is still owed before treating these as final.
+    // congeeMaxRiceG: max dry rice for the congee category. DERIVED, not measured:
+    // the 1:8 ratio (9 mL of pot fill per g of rice) against the half-full line above,
+    // rounded down. Shown as a warning, never clamped. Only the 6 qt has one; 3 and
+    // 8 qt rely on the generic half-full warning until someone can test those pots.
+    // One real 300 g run on the 6 qt is still owed before treating it as final.
     const POT_SIZES = [
-        { id: '3qt', label: '3 qt', minLiquidMl: 250, halfFullMl: 1400, congeeMaxRiceG: 150 },
+        { id: '3qt', label: '3 qt', minLiquidMl: 250, halfFullMl: 1400 },
         { id: '6qt', label: '6 qt', minLiquidMl: 250, halfFullMl: 2850, congeeMaxRiceG: 300 },
-        { id: '8qt', label: '8 qt', minLiquidMl: 500, halfFullMl: 3800, congeeMaxRiceG: 400 },
+        { id: '8qt', label: '8 qt', minLiquidMl: 500, halfFullMl: 3800 },
     ];
     const DEFAULT_POT_SIZE = '6qt';
 
@@ -1229,7 +1230,7 @@
         document.getElementById('release').textContent = release;
 
         const pot = POT_SIZES.find((p) => p.id === potSize);
-        if (currentCategory === 'congee' && weight > pot.congeeMaxRiceG) {
+        if (currentCategory === 'congee' && pot.congeeMaxRiceG && weight > pot.congeeMaxRiceG) {
             congeeCapEl.textContent = `⚠️ Over the safe congee limit for a ${pot.label} pot (max ~${pot.congeeMaxRiceG} g dry rice). Split into two runs.`;
             congeeCapEl.classList.remove('hidden');
         } else {
