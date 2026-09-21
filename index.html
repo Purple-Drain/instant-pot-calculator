@@ -658,7 +658,8 @@
     // the 1:8 ratio (9 mL of pot fill per g of rice) against the half-full line above,
     // rounded down. Shown as a warning, never clamped. Only the 6 qt has one; 3 and
     // 8 qt rely on the generic half-full warning until someone can test those pots.
-    // One real 300 g run on the 6 qt is still owed before treating it as final.
+    // Confirmed by a real 300 g run on the 6 qt (20.09.26): contents sat about half-full,
+    // no foam through the valve; result slightly thick, so thin with hot water to taste.
     const POT_SIZES = [
         { id: '3qt', label: '3 qt', minLiquidMl: 250, halfFullMl: 1400 },
         { id: '6qt', label: '6 qt', minLiquidMl: 250, halfFullMl: 2850, congeeMaxRiceG: 300 },
