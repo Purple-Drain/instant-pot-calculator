@@ -51,6 +51,7 @@
                     <input id="weight" type="number" inputmode="decimal" value="300" placeholder="0"
                         autocomplete="off"
                         class="w-full text-5xl font-black text-center text-blue-900 border-b-2 border-gray-200 focus:border-blue-600 outline-none pb-2 transition-colors">
+                    <div id="congee-cap-warning" class="hidden mt-2 text-xs font-bold text-amber-800 bg-amber-50 border border-amber-200 rounded-lg p-3 text-center"></div>
                     <div id="weight-unit-toggle" class="flex justify-center gap-2 mt-2"></div>
                 </div>
             </div>
@@ -411,6 +412,8 @@
         },
         congee: {
             label: 'Congee', icon: '🥣',
+            // Congee wants its surface starch, so it gets a flash rinse instead of the generic "until clear".
+            rinseStep: 'Flash rinse the dry rice once or twice and drain. Leave the water cloudy; the surface starch is what thickens the congee. Do not rinse until clear.',
             defaultOutro: 'Stir well; it thickens as it stands, so thin with hot water to taste.',
             items: {
                 'plain': {
@@ -460,7 +463,7 @@
                     ratio: 8.0, time: 20, release: 'Full NPR', gramsPerCup: 185,
                     soakMinutes: 0, defaultSoakMinutes: 0,
                     soak: null,
-                    note: 'Weight = dry rice only. The beef mince is browned separately on the stove and stirred in after cooking, so it stays tender; see Method below.',
+                    note: 'Weight = dry rice only. The beef mince is browned separately on the stove and stirred in after cooking, so it stays tender; see Method below. Rice weight is limited by pot size, not by mince weight. Mince is cooked separately and can be scaled independently.',
                     warning: '⚠️ Congee foams and expands a lot. Never fill the pot past the half-full line, and always let the pressure release fully and naturally (no quick release) to avoid clogging the valve with starchy foam.',
                     // The beef is velveted (optional) and browned on the stove, then stirred
                     // back through after cooking; it is never pressure cooked (#16).
@@ -468,8 +471,8 @@
                         { text: 'Mince 3 cloves garlic, grate 2cm fresh ginger, and finely slice the white parts of 2 spring onions (keep the green parts for garnish).', plain: false },
                         { text: 'Optional, for silkier mince (velveting): toss the beef mince with 1 tsp cornflour, 1 tbsp soy sauce, 1 tbsp oyster sauce and 1 tsp sesame oil per 300g, and leave it 10 min.', plain: false },
                         {
-                            text: 'In a frying pan on the stove, brown the beef mince (about 1.5x the dry rice weight, e.g. 300g mince for 200g rice) in a little oil, breaking it up, until no longer pink; stir in the garlic, ginger, and spring onion whites for 1 min, then set the pan aside off the heat. The beef goes back in after cooking and is never pressure cooked. (No spare pan: do this on Sauté, tip the mixture into a bowl, and deglaze the pot with a splash of the cooking liquid.)',
-                            plain: 'In a frying pan on the stove, dry-brown the beef mince (about 1.5x the dry rice weight, e.g. 300g mince for 200g rice) with nothing added, breaking it up, until no longer pink, then pour off the fat and set it aside off the heat. The beef goes back in after cooking and is never pressure cooked. (No spare pan: do this on Sauté, tip it into a bowl, and deglaze the pot with a splash of water.)',
+                            text: 'In a frying pan on the stove, brown the beef mince (roughly 1x to 3x the dry rice weight to taste, e.g. 300g to 900g mince for 300g rice; mince is cooked separately, so it does not affect pot fill) in a little oil, breaking it up, until no longer pink; stir in the garlic, ginger, and spring onion whites for 1 min, then set the pan aside off the heat. The beef goes back in after cooking and is never pressure cooked. (No spare pan: do this on Sauté, tip the mixture into a bowl, and deglaze the pot with a splash of the cooking liquid.) Allow 8-12 min on the stove for 1kg; longer if the pan is crowded.',
+                            plain: 'In a frying pan on the stove, dry-brown the beef mince (roughly 1x to 3x the dry rice weight to taste, e.g. 300g to 900g mince for 300g rice; mince is cooked separately, so it does not affect pot fill) with nothing added, breaking it up, until no longer pink, then pour off the fat and set it aside off the heat. The beef goes back in after cooking and is never pressure cooked. (No spare pan: do this on Sauté, tip it into a bowl, and deglaze the pot with a splash of water.) Allow 8-12 min on the stove for 1kg; longer if the pan is crowded.',
                         },
                     ],
                     methodOutro: {
@@ -651,9 +654,14 @@
     // recipes run 1 cup of water in a 6 qt pot, since a grain batch's water is
     // all free at the start; 375 would warn on the app's own default screen, so
     // 3 and 6 qt use the practical 1 cup floor. 8 qt keeps the manual's 2 cups.
+    // congeeMaxRiceG: max dry rice for the congee category. DERIVED, not measured:
+    // the 1:8 ratio (9 mL of pot fill per g of rice) against the half-full line above,
+    // rounded down. Shown as a warning, never clamped. Only the 6 qt has one; 3 and
+    // 8 qt rely on the generic half-full warning until someone can test those pots.
+    // One real 300 g run on the 6 qt is still owed before treating it as final.
     const POT_SIZES = [
         { id: '3qt', label: '3 qt', minLiquidMl: 250, halfFullMl: 1400 },
-        { id: '6qt', label: '6 qt', minLiquidMl: 250, halfFullMl: 2850 },
+        { id: '6qt', label: '6 qt', minLiquidMl: 250, halfFullMl: 2850, congeeMaxRiceG: 300 },
         { id: '8qt', label: '8 qt', minLiquidMl: 500, halfFullMl: 3800 },
     ];
     const DEFAULT_POT_SIZE = '6qt';
@@ -863,6 +871,7 @@
     const soakCapNote = document.getElementById('soak-cap-note');
     const totalTimeEl = document.getElementById('total-time');
     const liquidWarningEl = document.getElementById('liquid-warning');
+    const congeeCapEl = document.getElementById('congee-cap-warning');
     const copyMethodBtn = document.getElementById('copy-method');
     const warningEl = document.getElementById('warning');
     const liquidSelect = document.getElementById('liquid-select');
@@ -1221,6 +1230,12 @@
         document.getElementById('release').textContent = release;
 
         const pot = POT_SIZES.find((p) => p.id === potSize);
+        if (currentCategory === 'congee' && pot.congeeMaxRiceG && weight > pot.congeeMaxRiceG) {
+            congeeCapEl.textContent = `⚠️ Over the safe congee limit for a ${pot.label} pot (max ~${pot.congeeMaxRiceG} g dry rice). Split into two runs.`;
+            congeeCapEl.classList.remove('hidden');
+        } else {
+            congeeCapEl.classList.add('hidden');
+        }
         if (water > 0 && water < pot.minLiquidMl) {
             liquidWarningEl.textContent = `⚠️ ${water} mL is under the ~${pot.minLiquidMl} mL the ${pot.label} pot needs to reach pressure. Cook a bigger batch, or use pot-in-pot with ${pot.minLiquidMl} mL water in the outer pot.`;
             liquidWarningEl.classList.remove('hidden');
