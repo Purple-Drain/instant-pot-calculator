@@ -108,6 +108,13 @@ optionally adjust soak time, get water/pressure-time/release-method plus a gener
   conversion for dry weight needs a per-item `gramsPerCup` density figure (water doesn't, since
   it's converted by pure mass↔volume math). Switching category/item while in "cup" mode
   re-converts through the new item's own `gramsPerCup`, which is expected, since cups aren't canonical.
+- Drained weight (#48): a category may carry `drainGain = {rinsed, soaked}` (only `rice` today).
+  The category then shows a Dry / Drained toggle under the weight input; in drained mode the
+  typed figure lives in `drainedGrams` and `render()` derives the canonical dry `weight` as
+  drained ÷ `drainGainFor()`, interpolated rinsed→soaked with `soakFraction()`. Cup is hidden
+  while drained (wet cups don't match `gramsPerCup`). 1.25 soaked is sourced (milled rice,
+  30 min soak, 1.21 to 1.28x); 1.10 rinse-only is an estimate. Pulses are left out on purpose,
+  since they roughly double overnight.
 - Non-ratio items (produce prep guides) use `item.prepGuide = {cleaning, destarch, methods}`
   instead of `ratio`/`time`/`release`/`soak`; `isPrepItem()` checks for `prepGuide` presence.
   `render()` branches early into `renderPrepGuide()`, hiding the Weight/Soak/Results/Method

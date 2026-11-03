@@ -53,6 +53,10 @@
                         class="w-full text-5xl font-black text-center text-blue-900 border-b-2 border-gray-200 focus:border-blue-600 outline-none pb-2 transition-colors">
                     <div id="congee-cap-warning" class="hidden mt-2 text-xs font-bold text-amber-800 bg-amber-50 border border-amber-200 rounded-lg p-3 text-center"></div>
                     <div id="weight-unit-toggle" class="flex justify-center gap-2 mt-2"></div>
+                    <div id="weight-basis" class="hidden mt-2 text-center">
+                        <div id="weight-basis-toggle" class="flex justify-center gap-2"></div>
+                        <p id="weight-basis-note" class="hidden mt-2 text-xs text-gray-500"></p>
+                    </div>
                 </div>
             </div>
 
@@ -233,6 +237,11 @@
     const categories = {
         rice: {
             label: 'Rice', icon: '🍚',
+            // Drained weight ÷ gain = dry weight, for rice weighed after rinsing or
+            // soaking (#48). Milled rice soaked 30 min weighs 1.21 to 1.28x dry at
+            // 30 °C (Food Chemistry kinetics study); 1.10 for rinse-only is an
+            // estimate (surface water plus a few minutes' uptake), not measured.
+            drainGain: { rinsed: 1.10, soaked: 1.25 },
             items: {
                 'white-basmati': {
                     label: 'White Basmati', icon: '🍚', ingredientLabel: 'basmati rice',
@@ -734,6 +743,16 @@
         return Math.round((w * activeRatio(item, hours)) / 10) * 10;
     };
 
+    // Interpolated with soakFraction() like ratio/time: rinsed at 0 h, fully
+    // soaked at the item's soakMinutes cap. null when the category has no figure.
+    const drainGainFor = (category, item, hours) => {
+        const g = category.drainGain;
+        if (!g) return null;
+        return g.rinsed + (g.soaked - g.rinsed) * soakFraction(item, hours);
+    };
+
+    const drainedActive = () => weightBasis === 'drained' && !!categories[currentCategory].drainGain;
+
     const weightLabelFor = (categoryId) => {
         if (categoryId === 'combo') return 'Combined Dry Weight (Lentils + Rice, 1:1)';
         if (categoryId === 'congee') return 'Dry Rice Weight (for Congee)';
@@ -861,6 +880,9 @@
     const weightInput = document.getElementById('weight');
     const weightLabel = document.getElementById('weight-label');
     const weightUnitToggle = document.getElementById('weight-unit-toggle');
+    const weightBasisEl = document.getElementById('weight-basis');
+    const weightBasisToggle = document.getElementById('weight-basis-toggle');
+    const weightBasisNote = document.getElementById('weight-basis-note');
     const itemLabel = document.getElementById('item-label');
     const soakControls = document.getElementById('soak-controls');
     const soakInput = document.getElementById('soak-hours');
@@ -898,6 +920,10 @@
     const prepWashBicarbEl = document.getElementById('prep-wash-bicarb');
 
     let weightUnit = 'g';
+    // 'drained': the typed figure is rice weighed after rinsing/soaking, kept in
+    // drainedGrams; render() derives the canonical dry `weight` from it.
+    let weightBasis = 'dry';
+    let drainedGrams = 0;
     let waterUnit = 'mL';
     let potSize = DEFAULT_POT_SIZE;
     let plainMode = false;
@@ -910,6 +936,7 @@
         try {
             localStorage.setItem(STORAGE_KEY, JSON.stringify({
                 currentCategory, currentItemId, weight, weightUnit, waterUnit, potSize, plainMode,
+                weightBasis, drainedGrams,
             }));
         } catch (e) { /* storage unavailable */ }
     };
@@ -926,6 +953,10 @@
             if (WATER_UNITS.some((u) => u.id === saved.waterUnit)) waterUnit = saved.waterUnit;
             if (POT_SIZES.some((p) => p.id === saved.potSize)) potSize = saved.potSize;
             plainMode = saved.plainMode === true;
+            if (saved.weightBasis === 'drained' && Number.isFinite(saved.drainedGrams)) {
+                weightBasis = 'drained';
+                drainedGrams = saved.drainedGrams;
+            }
         } catch (e) { /* ignore corrupt or unavailable storage */ }
     };
     loadState();
@@ -949,6 +980,19 @@
     };
 
     buildUnitToggle(weightUnitToggle, WEIGHT_UNITS, (id) => { weightUnit = id; });
+    const WEIGHT_BASES = [
+        { id: 'dry', label: 'Dry' },
+        { id: 'drained', label: 'Drained (rinsed/soaked)' },
+    ];
+    buildUnitToggle(weightBasisToggle, WEIGHT_BASES, (id) => {
+        // Seed the drained figure from the current dry weight so the screen
+        // doesn't jump; switching back keeps the derived dry weight.
+        if (id === 'drained' && weightBasis !== 'drained') {
+            const gain = drainGainFor(categories[currentCategory], currentItem(), soakHours) || 1;
+            drainedGrams = weight * gain;
+        }
+        weightBasis = id;
+    });
     buildUnitToggle(potSizeToggle, POT_SIZES, (id) => { potSize = id; });
     plainToggle.addEventListener('click', () => { plainMode = !plainMode; render(); });
     buildUnitToggle(waterUnitToggle, WATER_UNITS, (id) => { waterUnit = id; });
@@ -1068,11 +1112,12 @@
     // --- Weight input ---
     weightInput.addEventListener('input', (e) => {
         const typed = Math.max(0, parseFloat(e.target.value) || 0);
-        weight = displayToGrams(typed, weightUnit, currentItem());
+        if (drainedActive()) drainedGrams = displayToGrams(typed, weightUnit, currentItem());
+        else weight = displayToGrams(typed, weightUnit, currentItem());
         render();
     });
     weightInput.addEventListener('blur', () => {
-        weightInput.value = formatWeight(weight, weightUnit, currentItem());
+        weightInput.value = formatWeight(drainedActive() ? drainedGrams : weight, weightUnit, currentItem());
     });
 
     copyMethodBtn.addEventListener('click', async () => {
@@ -1153,22 +1198,41 @@
             return;
         }
 
+        // Drained mode (#48): cups of wet rice don't match the dry gramsPerCup,
+        // so cup falls back to grams while it's on.
+        const drainGain = drainGainFor(categories[currentCategory], item, soakHours);
+        weightBasisEl.classList.toggle('hidden', !drainGain);
+        const drained = drainedActive();
+        if (drained && weightUnit === 'cup') weightUnit = 'g';
+        if (drained) weight = drainedGrams / drainGain;
+
         // Only rewrite the input when the user isn't typing in it, otherwise
         // "1." becomes "1.00" mid-keystroke in oz/cup mode.
         if (document.activeElement !== weightInput) {
-            weightInput.value = formatWeight(weight, weightUnit, item);
+            weightInput.value = formatWeight(drained ? drainedGrams : weight, weightUnit, item);
         }
+        if (drained) {
+            weightBasisNote.textContent = `≈ ${formatWeight(weight, weightUnit, item)} ${weightUnit} dry (÷ ${drainGain.toFixed(2)}, ${soakHours > 0 ? 'soaked' : 'rinsed only'}). Set the soak time below to match. Drain well before weighing.`;
+            weightBasisNote.classList.remove('hidden');
+        } else {
+            weightBasisNote.classList.add('hidden');
+        }
+        weightLabel.textContent = drained ? 'Drained Rice Weight' : weightLabelFor(currentCategory);
         const unitBtnClass = (active) => `${UNIT_BTN_BASE} ${active
             ? 'bg-blue-600 text-white border-blue-600'
             : 'bg-gray-50 text-gray-500 border-gray-200 hover:bg-gray-100'}`;
         weightUnitToggle.querySelectorAll('button').forEach((btn) => {
             btn.className = unitBtnClass(btn.dataset.unit === weightUnit);
+            btn.classList.toggle('hidden', drained && btn.dataset.unit === 'cup');
         });
         waterUnitToggle.querySelectorAll('button').forEach((btn) => {
             btn.className = unitBtnClass(btn.dataset.unit === waterUnit);
         });
         potSizeToggle.querySelectorAll('button').forEach((btn) => {
             btn.className = unitBtnClass(btn.dataset.unit === potSize);
+        });
+        weightBasisToggle.querySelectorAll('button').forEach((btn) => {
+            btn.className = unitBtnClass(btn.dataset.unit === (drained ? 'drained' : 'dry'));
         });
 
         if (item.soak) {
